@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#FBF8F3">
+<title>Us</title>
+<style>
+:root{
+  --bg:#FBF8F3; --bg2:#F4ECE3; --paper:#FFFDFA; --paper2:#F8F1E9;
+  --ink:#2B2320; --ink-dim:#6E605A; --ink-faint:#A79A93;
+  --line:rgba(43,35,32,.13); --line-soft:rgba(43,35,32,.07);
+  --wine:#7C2144; --wine-deep:#5E1733; --wine-soft:#F3E3E9;
+  --gold:#A98247; --gold-soft:#F3E9D6; --sage:#5F6F52; --sage-soft:#E8EBDE;
+  --shadow:0 1px 2px rgba(43,35,32,.04), 0 10px 30px -18px rgba(43,35,32,.28);
+  --shadow-lg:0 2px 6px rgba(43,35,32,.05), 0 26px 50px -24px rgba(43,35,32,.38);
+  --r:16px;
+  --display:"Didot","Bodoni 72","Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,"Noto Serif",serif;
+  --body:"Avenir Next",Avenir,"Segoe UI",-apple-system,"Helvetica Neue","Noto Sans",Roboto,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#171210; --bg2:#211815; --paper:#201815; --paper2:#281D19;
+    --ink:#F3EAE3; --ink-dim:#BCAEA5; --ink-faint:#8A7B72;
+    --line:rgba(243,234,227,.15); --line-soft:rgba(243,234,227,.07);
+    --wine:#E0A2B6; --wine-deep:#F0C2CF; --wine-soft:#3A2130;
+    --gold:#CFA968; --gold-soft:#3A2E1B; --sage:#A7BE93; --sage-soft:#252E1F;
+    --shadow:0 1px 2px rgba(0,0,0,.35), 0 10px 30px -18px rgba(0,0,0,.7);
+    --shadow-lg:0 2px 6px rgba(0,0,0,.4), 0 26px 50px -24px rgba(0,0,0,.8);
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font-family:var(--body);background:var(--bg);color:var(--ink);line-height:1.6;font-size:16px;-webkit-font-smoothing:antialiased;
+  background-image:radial-gradient(1100px 480px at 50% -10%, var(--bg2), transparent 72%), radial-gradient(700px 500px at 108% 108%, rgba(169,130,71,.06), transparent 70%);background-attachment:fixed;}
+h1,h2,h3,.display{font-family:var(--display);font-weight:500;letter-spacing:.005em}
+h1{font-size:1.85rem;line-height:1.16;margin:0 0 .4rem}
+h2{font-size:1.3rem;margin:0 0 .5rem}
+h3{font-size:1.06rem;margin:0 0 .35rem}
+p{margin:0 0 .85rem}
+small{color:var(--ink-dim)}
+.wrap{max-width:600px;margin:0 auto;padding:0 22px 122px}
+header.top{position:sticky;top:0;z-index:30;padding:calc(env(safe-area-inset-top,0px) + 16px) 22px 13px;background:color-mix(in srgb, var(--bg) 88%, transparent);backdrop-filter:saturate(1.3) blur(12px);border-bottom:1px solid var(--line-soft);}
+.top-in{max-width:600px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:baseline;gap:10px}
+.brand .logo{font-family:var(--display);font-size:1.5rem;font-weight:500;color:var(--wine);letter-spacing:.03em}
+.brand .tag{font-size:.6rem;color:var(--ink-faint);letter-spacing:.24em;text-transform:uppercase;transform:translateY(-1px)}
+.icon-btn{border:1px solid var(--line);background:transparent;color:var(--ink-dim);width:38px;height:38px;border-radius:50%;display:grid;place-items:center;cursor:pointer;transition:.2s}
+.icon-btn:hover{border-color:var(--ink-faint);color:var(--ink)}
+.icon-btn svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.view{display:none;animation:fadeUp .5s cubic-bezier(.2,.7,.3,1)}
+.view.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){.view{animation:none}*{transition:none!important}}
+.lead{color:var(--ink-dim);font-size:.97rem;margin:0 0 1.2rem;max-width:34em}
+.eyebrow{display:flex;align-items:center;gap:11px;font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin:2rem 0 .85rem;font-weight:600}
+.eyebrow::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent)}
+.eyebrow:first-child{margin-top:.5rem}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:22px;box-shadow:var(--shadow);margin-bottom:15px;position:relative}
+.card.hero{background:linear-gradient(170deg,var(--paper2),var(--paper));box-shadow:var(--shadow-lg);border-color:var(--line)}
+.card.accent{border-top:2px solid var(--gold)}
+.card-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.pill{font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;font-weight:700;padding:5px 11px;border-radius:99px;border:1px solid currentColor;opacity:.8;white-space:nowrap}
+.pill.rose{color:var(--wine)}.pill.gold{color:var(--gold)}.pill.sage{color:var(--sage)}
+.draw-text{font-family:var(--display);font-size:1.3rem;line-height:1.45;min-height:3.6em;margin:.1rem 0 1rem;font-weight:500}
+.draw-text.small{font-family:var(--body);font-size:1rem;line-height:1.6;min-height:0;font-weight:400;color:var(--ink)}
+.btn{font-family:var(--body);font-size:.72rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;border-radius:99px;padding:12px 20px;cursor:pointer;border:1px solid transparent;transition:.18s;display:inline-flex;align-items:center;gap:8px}
+.btn:active{transform:scale(.975)}
+.btn-primary{background:var(--wine);color:#fff;box-shadow:0 8px 20px -12px var(--wine)}
+.btn-primary:hover{background:var(--wine-deep)}
+.btn-ghost{background:transparent;border-color:var(--line);color:var(--ink)}
+.btn-ghost:hover{border-color:var(--ink-faint);background:var(--paper2)}
+.btn-quiet{background:transparent;color:var(--ink-dim);padding:9px 12px;letter-spacing:.1em}
+.btn-quiet:hover{color:var(--ink)}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:430px){.grid2{grid-template-columns:1fr}}
+ul.clean{list-style:none;padding:0;margin:0}
+ul.clean li{position:relative;padding-left:20px;margin-bottom:.6rem}
+ul.clean li::before{content:"";position:absolute;left:1px;top:.66em;width:6px;height:6px;border-radius:50%;background:var(--gold);opacity:.7}
+ol.steps{list-style:none;counter-reset:s;padding:0;margin:0}
+ol.steps li{counter-increment:s;position:relative;padding-left:46px;margin-bottom:1.05rem}
+ol.steps li::before{content:counter(s);position:absolute;left:0;top:-3px;width:31px;height:31px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--line);color:var(--wine);font-family:var(--display);font-weight:500;font-size:.95rem;background:var(--paper2)}
+ol.steps li strong{display:block;font-family:var(--display);font-weight:500;font-size:1.02rem;margin-bottom:.05rem}
+.choice{border:1px solid var(--line);background:var(--paper);border-radius:14px;padding:18px 14px;cursor:pointer;text-align:center;font-family:var(--display);font-size:1.08rem;transition:.18s;flex:1;color:var(--ink);font-weight:500}
+.choice:hover{border-color:var(--wine);background:var(--paper2)}
+.choice.chosen{background:var(--wine);color:#fff;border-color:var(--wine)}
+.vs{align-self:center;font-size:.6rem;letter-spacing:.22em;color:var(--ink-faint);text-transform:uppercase}
+.die{width:92px;height:92px;border-radius:14px;margin:0 auto 16px;background:var(--paper);border:1px solid var(--line);display:grid;place-items:center;font-family:var(--display);font-size:2.7rem;color:var(--wine);box-shadow:var(--shadow)}
+.die.rolling{animation:shake .5s}
+@keyframes shake{0%,100%{transform:rotate(0)}25%{transform:rotate(-8deg)}75%{transform:rotate(8deg)}}
+.timer-ring{display:flex;align-items:center;justify-content:center;margin:8px 0 12px}
+.timer-num{font-family:var(--display);font-size:2.6rem;font-variant-numeric:tabular-nums;color:var(--wine)}
+.timer-phase{text-align:center;color:var(--ink-dim);font-size:.92rem;min-height:2.8em;max-width:26em;margin:0 auto}
+.seg{display:flex;background:var(--paper2);border:1px solid var(--line-soft);border-radius:99px;padding:4px;gap:4px;margin-bottom:16px}
+.seg button{flex:1;border:none;background:transparent;padding:10px 6px;border-radius:99px;cursor:pointer;font-family:var(--body);font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);transition:.18s}
+.seg button.on{background:var(--paper);color:var(--wine);box-shadow:var(--shadow)}
+.dmap{list-style:none;padding:0;margin:0}
+.dmap li{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line-soft)}
+.dmap li:last-child{border-bottom:none}
+.dmap .label{flex:1;font-size:.94rem}
+.cycle{display:flex;gap:6px}
+.cycle button{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--paper);cursor:pointer;font-size:.68rem;font-weight:700;color:var(--ink-faint);transition:.15s;padding:0}
+.cycle button.yes.on{background:var(--sage);border-color:var(--sage);color:#fff}
+.cycle button.maybe.on{background:var(--gold);border-color:var(--gold);color:#fff}
+.cycle button.no.on{background:var(--ink-faint);border-color:var(--ink-faint);color:#fff}
+.match-list{list-style:none;padding:0;margin:.4rem 0 0}
+.match-list li{padding:10px 14px;border-radius:11px;margin-bottom:7px;font-size:.92rem}
+.match-list li.yes{background:var(--sage-soft);color:var(--sage)}
+.match-list li.diff{background:var(--gold-soft);color:var(--gold)}
+.note-out{background:var(--paper2);border-left:2px solid var(--gold);border-radius:4px;padding:16px 18px;font-family:var(--display);font-size:1.15rem;line-height:1.5;margin:.2rem 0 1rem;min-height:3em;font-style:italic}
+.plan-step{display:flex;gap:13px;margin-bottom:.9rem}
+.plan-step .dot{width:7px;height:7px;border-radius:50%;background:var(--gold);margin-top:.6em;flex:none;opacity:.85}
+.plan-step .txt{font-size:.95rem}
+.plan-step .txt strong{font-family:var(--display);font-weight:500;font-size:1.02rem}
+.cd-num{font-family:var(--display);font-size:3.2rem;line-height:1;color:var(--wine)}
+input[type=date],input[type=text],textarea{font-family:var(--body);font-size:1rem;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--paper);color:var(--ink);width:100%}
+textarea{min-height:76px;resize:vertical;line-height:1.5}
+input:focus,textarea:focus{outline:2px solid var(--wine);outline-offset:1px}
+.quote{border-left:2px solid var(--gold);padding:.1rem 0 .1rem 16px;margin:0 0 1rem;font-family:var(--display);font-size:1.1rem;line-height:1.5;color:var(--ink)}
+.script{background:var(--paper2);border:1px solid var(--line-soft);border-radius:12px;padding:14px 16px;margin-bottom:10px}
+.script .who{font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:.3rem}
+.script .say{font-family:var(--display);font-size:1.05rem;line-height:1.45}
+.passbanner{background:var(--wine-soft);color:var(--wine);border-radius:12px;padding:12px 16px;font-size:.84rem;font-weight:700;letter-spacing:.04em;margin-bottom:12px;text-align:center}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:.2rem 0 .9rem}
+.chip{border:1px solid var(--line);background:var(--paper);border-radius:99px;padding:9px 14px;font-size:.84rem;cursor:pointer;transition:.15s;color:var(--ink);font-family:var(--body)}
+.chip.on{background:var(--wine);color:#fff;border-color:var(--wine)}
+.reveal-head{display:flex;justify-content:space-between;font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-faint);font-weight:700;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.reveal-body{display:flex;justify-content:space-between;gap:16px;padding:14px 0 4px}
+.reveal-body .you,.reveal-body .them{flex:1;font-family:var(--display);font-size:1.12rem;line-height:1.45}
+.reveal-body .you{color:var(--wine)}
+.reveal-body .them{text-align:right;color:var(--gold)}
+.switch{display:flex;align-items:center;justify-content:space-between;gap:14px;background:var(--paper2);border:1px solid var(--line-soft);border-radius:14px;padding:15px 17px;margin-bottom:14px}
+.switch .lbl{font-size:.9rem}
+.switch .lbl strong{display:block;font-family:var(--display);font-weight:500;font-size:1.04rem}
+.toggle{width:52px;height:30px;border-radius:99px;border:1px solid var(--line);background:var(--paper);position:relative;cursor:pointer;transition:.2s;flex:none}
+.toggle::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:var(--ink-faint);transition:.2s}
+.toggle.on{background:var(--wine);border-color:var(--wine)}
+.toggle.on::after{left:25px;background:#fff}
+.shy-only{display:none}
+body.shy .shy-only{display:block}
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:40;padding:9px 8px calc(env(safe-area-inset-bottom,0px) + 9px);background:color-mix(in srgb, var(--bg) 86%, transparent);backdrop-filter:saturate(1.4) blur(14px);border-top:1px solid var(--line-soft)}
+.tabs-in{max-width:600px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);gap:2px}
+.tab{border:none;background:transparent;cursor:pointer;padding:7px 2px 5px;border-radius:12px;display:flex;flex-direction:column;align-items:center;gap:5px;color:var(--ink-faint);font-family:var(--body);font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600;transition:.18s}
+.tab svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.tab.on{color:var(--wine)}
+.toast{position:fixed;left:50%;bottom:100px;transform:translate(-50%,20px);background:var(--ink);color:var(--bg);padding:11px 20px;border-radius:99px;font-size:.84rem;opacity:0;pointer-events:none;transition:.3s;z-index:80;box-shadow:var(--shadow-lg);max-width:88vw;text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.hint{font-size:.82rem;color:var(--ink-faint);margin-top:.5rem}
+.foot{text-align:center;color:var(--ink-faint);font-size:.76rem;padding:28px 10px 10px}
+.foot button{background:none;border:none;color:var(--gold);font:inherit;text-decoration:underline;cursor:pointer;padding:0 4px}
+#lock{position:fixed;inset:0;z-index:100;display:none;background:var(--bg);background-image:radial-gradient(900px 460px at 50% -6%, var(--bg2), transparent 70%);align-items:center;justify-content:center;padding:32px 24px}
+#lock.show{display:flex;animation:fadeUp .35s ease}
+.lock-card{width:100%;max-width:320px;text-align:center}
+.lock-mono{font-family:var(--display);font-size:2rem;color:var(--wine);letter-spacing:.05em}
+.lock-rule{width:34px;height:1px;background:var(--gold);margin:14px auto 22px}
+.lock-title{font-size:.66rem;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:20px;font-weight:600}
+.dots{display:flex;gap:16px;justify-content:center;margin-bottom:30px}
+.dot{width:13px;height:13px;border-radius:50%;border:1px solid var(--ink-faint);transition:.2s}
+.dot.fill{background:var(--wine);border-color:var(--wine);transform:scale(1.08)}
+.keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;justify-content:center}
+.key{aspect-ratio:1;border-radius:50%;border:1px solid var(--line);background:transparent;color:var(--ink);font-family:var(--display);font-size:1.5rem;cursor:pointer;transition:.15s;display:grid;place-items:center}
+.key:hover{border-color:var(--wine);color:var(--wine)}
+.key:active{background:var(--wine-soft);transform:scale(.95)}
+.key.blank{visibility:hidden}
+.key.del svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.lock-hint{font-size:.8rem;color:var(--ink-faint);margin-top:22px;min-height:1.4em}
+.lock-card.shake{animation:lshake .42s}
+@keyframes lshake{0%,100%{transform:translateX(0)}20%{transform:translateX(-9px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(4px)}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-in">
+    <div class="brand"><span class="logo">Us</span><span class="tag">for the two of you</span></div>
+    <button class="icon-btn" id="lockNow" title="Lock" aria-label="Lock"><svg viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2.2"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></svg></button>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- TODAY -->
+  <section class="view active" id="view-today">
+    <h1>Today&rsquo;s little bit of us</h1>
+    <p class="lead">Four small moments &mdash; heart, laugh, touch, and one for later. That is the whole ask today.</p>
+    <div class="card accent"><div class="card-head"><span class="pill rose">Heart</span></div><p class="draw-text" data-emo></p><div class="btn-row"><button class="btn btn-ghost" data-redraw="emo">Another</button></div></div>
+    <div class="card accent"><div class="card-head"><span class="pill gold">Play</span></div><p class="draw-text" data-play></p><div class="btn-row"><button class="btn btn-ghost" data-redraw="play">Another</button></div></div>
+    <div class="card accent"><div class="card-head"><span class="pill sage">Touch</span></div><p class="draw-text" data-phy></p><div class="btn-row"><button class="btn btn-ghost" data-redraw="phy">Another</button></div></div>
+    <div class="card accent"><div class="card-head"><span class="pill rose">For later</span></div><p class="draw-text" data-desire></p><div class="btn-row"><button class="btn btn-ghost" data-redraw="desire">Another</button></div></div>
+    <div class="eyebrow">A spark to send</div>
+    <div class="card">
+      <p class="note-out" data-spark>Thinking about you in the middle of my day. Nothing urgent &mdash; just you.</p>
+      <div class="btn-row"><button class="btn btn-primary" data-redraw="spark">New line</button><button class="btn btn-ghost" id="copySpark">Copy</button></div>
+      <p class="hint">Send it out of the blue. Anticipation starts long before you are in the same room.</p>
+    </div>
+  </section>
+
+  <!-- PLAY -->
+  <section class="view" id="view-play">
+    <h1>Play together</h1>
+    <p class="lead">One phone, two people. Nothing here has to be said out loud &mdash; most of it you can type and reveal.</p>
+
+    <div class="switch">
+      <span class="lbl"><strong>Shy mode</strong>Turn this on and the games give you a box to type into instead of speak.</span>
+      <button class="toggle" id="shyToggle" aria-label="Shy mode"></button>
+    </div>
+
+    <div class="card hero shy-only">
+      <h3 style="margin-bottom:.7rem">Ground rules &mdash; for the shy ones</h3>
+      <ul class="clean">
+        <li>You are allowed to type instead of speak. Always.</li>
+        <li>You can write it and leave the room while they read it.</li>
+        <li>Lights off, under the covers, back to back &mdash; all allowed.</li>
+        <li>&ldquo;Maybe&rdquo; is a complete answer.</li>
+        <li>Laughing is allowed. Nobody is grading you.</li>
+        <li>You can stop at any point, and give no reason.</li>
+        <li>Nothing you write down is a promise.</li>
+      </ul>
+    </div>
+
+    <div class="eyebrow">This or that</div>
+    <div class="card">
+      <div class="grid2" style="align-items:stretch">
+        <button class="choice" data-choice="0"></button>
+        <span class="vs" style="text-align:center">or</span>
+        <button class="choice" data-choice="1"></button>
+      </div>
+      <p class="hint" id="choiceHint">Tap your pick, then say why. Let them pick too &mdash; the &ldquo;why&rdquo; is the good part.</p>
+      <div class="btn-row" style="margin-top:.8rem"><button class="btn btn-ghost" id="nextChoice">Next pair</button></div>
+      <div class="shy-only" style="margin-top:1rem">
+        <p class="hint" style="margin-bottom:.5rem">Rather not say it? Type why instead, then hand the phone over.</p>
+        <textarea id="toiNote" placeholder="Why you picked it..."></textarea>
+      </div>
+    </div>
+
+    <div class="eyebrow">Pass &amp; reveal</div>
+    <div class="card hero">
+      <p class="lead" style="margin-bottom:.9rem">The one for people who freeze when they have to speak. You answer, hand over the phone, they answer, then you both see it at once.</p>
+      <div id="prBody"></div>
+    </div>
+
+    <div class="eyebrow">Never have I ever</div>
+    <div class="card">
+      <p class="lead" style="margin-bottom:.9rem">Tap everything you <em>have</em> done. Pass the phone. Then see what you share, and what you don&rsquo;t.</p>
+      <div id="nhBody"></div>
+    </div>
+
+    <div class="eyebrow">Truth or dare</div>
+    <div class="card">
+      <p class="draw-text small" id="todOut" style="text-align:center;min-height:3em">Pick one. Be brave.</p>
+      <div class="btn-row" style="justify-content:center">
+        <button class="btn btn-primary" id="truthBtn">Truth</button>
+        <button class="btn btn-primary" id="dareBtn">Dare</button>
+      </div>
+    </div>
+
+    <div class="eyebrow">Roll for it</div>
+    <div class="card">
+      <div class="die" id="die">?</div>
+      <p class="draw-text small" id="dieText" style="text-align:center;min-height:3em">Roll the die and do whatever it lands on. One roll each.</p>
+      <div style="text-align:center"><button class="btn btn-primary" id="rollDie">Roll</button></div>
+    </div>
+
+    <div class="eyebrow">The question ladder</div>
+    <div class="card">
+      <div class="seg" id="qSeg"><button class="on" data-q="light">Light</button><button data-q="deep">Deep</button><button data-q="intimate">Close</button></div>
+      <p class="draw-text" data-qtext></p>
+      <div class="btn-row"><button class="btn btn-ghost" data-redraw="q">Another</button></div>
+    </div>
+
+    <div class="eyebrow">Six-minute connect</div>
+    <div class="card hero">
+      <p class="lead" style="margin-bottom:.7rem">A guided pause. Sit close. Two minutes each, three rounds.</p>
+      <div class="timer-ring"><span class="timer-num" id="timerNum">02:00</span></div>
+      <p class="timer-phase" id="timerPhase">Round 1 &mdash; just look at each other and breathe. No talking.</p>
+      <div class="btn-row" style="justify-content:center"><button class="btn btn-primary" id="timerBtn">Start</button><button class="btn btn-ghost" id="timerReset">Reset</button></div>
+    </div>
+  </section>
+
+  <!-- DESIRE -->
+  <section class="view" id="view-desire">
+    <h1>Desire</h1>
+    <p class="lead">The honest part. For adults, and for the two of you only. Nothing here is a demand, and nothing has to be said aloud.</p>
+
+    <div class="eyebrow">Yes / No / Maybe</div>
+    <div class="card">
+      <p style="font-size:.92rem;color:var(--ink-dim);margin-bottom:1rem">Go down the list and tap <strong>Y</strong>, <strong>M</strong>, or <strong>N</strong>. Each of you fills it in privately, then press compare. A <em>maybe</em> is not a no &mdash; it is an &ldquo;ask me again when I feel safe.&rdquo;</p>
+      <div class="seg" id="ynmSeg"><button class="on" data-who="you">You</button><button data-who="partner">Your partner</button></div>
+      <ul class="dmap" id="ynmList"></ul>
+      <div class="btn-row" style="margin-top:1rem">
+        <button class="btn btn-primary" id="ynmCompare">See what matches</button>
+        <button class="btn btn-ghost" id="ynmShare">Send my answers</button>
+        <button class="btn btn-quiet" id="ynmClear">Clear</button>
+      </div>
+      <div id="ynmOut" style="margin-top:1rem"></div>
+      <p class="hint">Too shy to say it? Fill in your half, press <strong>Send my answers</strong>, and paste the link to your partner. Their phone fills itself in.</p>
+    </div>
+
+    <div class="eyebrow">Solo, and us</div>
+    <div class="card">
+      <h3 style="margin-bottom:.6rem">The thing you have never done in front of each other</h3>
+      <p>Almost every shy couple has this one. It is not a failing &mdash; it is just an unopened door, and it is fine to open it slowly.</p>
+      <p>Start smaller than you think. It does not begin with performing for each other. It begins with <em>talking about it</em> &mdash; and you can do that by typing, in the dark, from across the room.</p>
+      <ul class="clean">
+        <li><strong>First, just say it out loud</strong> (or type it): &ldquo;I have never told you what I think about when I&rsquo;m alone.&rdquo; That sentence alone changes the temperature.</li>
+        <li><strong>Then swap the facts.</strong> When, how often, what you picture. No judgement, just curiosity.</li>
+        <li><strong>Then the ladder.</strong> &ldquo;Would you want me to know when you do?&rdquo; &rarr; &ldquo;Would you want me in the room?&rdquo; &rarr; &ldquo;Would you want to watch?&rdquo; &rarr; &ldquo;Would you want to do it side by side?&rdquo; Each rung is a maybe until it isn&rsquo;t.</li>
+        <li><strong>Nobody has to go first.</strong> Write your answer, hand over the phone, let them read it with the light off if that helps.</li>
+      </ul>
+      <p class="hint">It is all in the Yes / No / Maybe list above too &mdash; look for the last few items.</p>
+    </div>
+
+    <div class="eyebrow">When you want it more &mdash; or less</div>
+    <div class="card">
+      <h3 style="margin-bottom:.7rem">Two kinds of desire</h3>
+      <p>Most couples have one person whose wanting arrives on its own &mdash; a spark out of nowhere &mdash; and one whose wanting only shows up <em>once things have already started</em>. Neither is broken, and neither means &ldquo;less love.&rdquo;</p>
+      <p>The spontaneous one feels rejected when the answer is no. The responsive one feels pressured by being asked cold. So both end up hurt by the same moment.</p>
+      <p class="quote">Think of desire as an accelerator and a brake. Stress, exhaustion, resentment, being touched-out by the kids &mdash; those are brakes. Novelty, feeling wanted, unhurried touch, a cleared evening &mdash; those are the accelerator. You cannot fix a stuck brake by flooring the accelerator. Take your foot off the brake first.</p>
+      <ul class="clean">
+        <li><strong>Schedule it.</strong> A night you both protect. Anticipation does half the work for the responsive partner.</li>
+        <li><strong>Let &ldquo;yes&rdquo; mean &ldquo;yes to starting&rdquo;</strong> &mdash; not yes to finishing. Permission to change your mind is what makes starting safe.</li>
+        <li><strong>Touch without a demand.</strong> Back rubs and kisses with no expectation retrain the brake.</li>
+        <li><strong>Deal with resentment first.</strong> Unresolved anger is the biggest brake there is.</li>
+        <li><strong>Take sex off the scoreboard.</strong> Keeping count poisons it.</li>
+      </ul>
+    </div>
+
+    <div class="eyebrow">How often is enough</div>
+    <div class="card">
+      <p>Ask each other plainly: what would feel good &mdash; a week, a fortnight, a month? Then meet nearer the <em>higher</em> number, not the lower. The lower-desire partner sets the ceiling only if you both let them.</p>
+      <p class="hint">And separate &ldquo;sex&rdquo; from &ldquo;connection.&rdquo; A couple who touch, kiss and flirt all week has far less riding on any single night.</p>
+    </div>
+
+    <div class="eyebrow">How to ask &mdash; and how to say no</div>
+    <div class="card">
+      <div class="script"><div class="who">The direct ask</div><div class="say">&ldquo;I want you tonight. Are you up for it?&rdquo;</div></div>
+      <div class="script"><div class="who">The slow build</div><div class="say">&ldquo;Come here&rdquo; &mdash; and kiss them like you mean it, not a peck. See where it goes.</div></div>
+      <div class="script"><div class="who">The standing offer</div><div class="say">&ldquo;You don&rsquo;t have to be in the mood to start. Just come close, and we&rsquo;ll see.&rdquo;</div></div>
+      <div class="script"><div class="who">Saying no &mdash; without rejecting</div><div class="say">&ldquo;Not tonight, I&rsquo;m running on empty. But I want you &mdash; can we make Thursday ours?&rdquo;</div></div>
+      <div class="script"><div class="who">If you&rsquo;re the one always ready</div><div class="say">&ldquo;I know it&rsquo;s not tonight. Let&rsquo;s pick a night this week and protect it.&rdquo;</div></div>
+      <p class="hint">The rule that saves marriages: never just &ldquo;no&rdquo; and roll over. Give a reason and a rain-check.</p>
+    </div>
+
+    <div class="eyebrow">Sensate focus</div>
+    <div class="card hero">
+      <p class="lead" style="margin-bottom:.9rem">The classic exercise for rebuilding touch when sex has gone quiet. Three stages &mdash; do not rush them.</p>
+      <ol class="steps">
+        <li><strong>Touch, nothing else</strong>Fifteen minutes each. One lies down, the other touches everywhere <em>except</em> breasts and genitals. No goal, no finishing. Say only what feels good. Then swap.</li>
+        <li><strong>Add the rest</strong>Same again, now including breasts and genitals &mdash; but still no goal, no rush to orgasm. This is a map-making exercise. Learn their body again.</li>
+        <li><strong>Let it lead</strong>Now you may finish. Stages one and two existed to take the pressure off and make the third one easy.</li>
+      </ol>
+      <p class="hint">It will feel awkward at first. That is normal, and it passes. Persist for a few weeks before deciding it does not work.</p>
+    </div>
+
+    <div class="eyebrow">Roll the desire dice</div>
+    <div class="card">
+      <div class="die" id="die2">?</div>
+      <p class="draw-text small" id="die2Text" style="text-align:center;min-height:3em">One roll each. Do what it says.</p>
+      <div style="text-align:center"><button class="btn btn-primary" id="rollDie2">Roll</button></div>
+    </div>
+
+    <div class="eyebrow">The twenty minutes after</div>
+    <div class="card">
+      <p>Aftercare is part of the sex, not an extra. Don&rsquo;t roll over and reach for the phone.</p>
+      <ul class="clean">
+        <li>Stay touching. Say one true thing.</li>
+        <li>Ask: &ldquo;What was good?&rdquo; &mdash; it teaches them for next time.</li>
+        <li>Water, a laugh, a cuddle. Land it softly.</li>
+        <li>If it was awkward or one of you didn&rsquo;t finish &mdash; say so gently, without blame. It is information, not a verdict.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- US -->
+  <section class="view" id="view-us">
+    <h1>Understanding each other</h1>
+    <p class="lead">The part most couples skip: actually saying what you each need. Start here, gently.</p>
+    <div class="eyebrow">How to have the talk</div>
+    <div class="card">
+      <h3 style="margin-bottom:.9rem">The needs conversation</h3>
+      <ol class="steps">
+        <li><strong>Set the scene</strong>Not in bed, not after a fight, not with kids in earshot. Sit side by side, phones away.</li>
+        <li><strong>Start soft</strong>&ldquo;I love us. I want more of us. Can we talk about what each of us needs?&rdquo;</li>
+        <li><strong>Use &ldquo;I&rdquo;, not &ldquo;you&rdquo;</strong>&ldquo;I feel closest when&hellip;&rdquo; lands very differently from &ldquo;You never&hellip;&rdquo;</li>
+        <li><strong>Open the Yes / No / Maybe list together</strong>Point at the same list. Low pressure beats a big speech.</li>
+        <li><strong>Ask, don&rsquo;t assume</strong>&ldquo;What would make this week feel good for you?&rdquo; Then actually listen.</li>
+        <li><strong>Agree on one thing</strong>One small thing to try this week. Not ten. One.</li>
+        <li><strong>Close warm</strong>Thank them for talking. Touch. End on connection, never on a checklist.</li>
+        <li><strong>Revisit in a week</strong>This is a practice, not a one-off summit.</li>
+      </ol>
+    </div>
+    <div class="eyebrow">Cards to draw</div>
+    <div class="card"><p class="draw-text" data-convo></p><div class="btn-row"><button class="btn btn-ghost" data-redraw="convo">Draw a card</button></div></div>
+  </section>
+
+  <!-- PLAN -->
+  <section class="view" id="view-plan">
+    <h1>Plan the good stuff</h1>
+    <p class="lead">Intimacy rarely happens by accident when life is full. Put it in the calendar &mdash; and build the anticipation.</p>
+    <div class="eyebrow">Build it up over seven days</div>
+    <div class="card hero">
+      <p class="lead" style="margin-bottom:.9rem">A slow burn to a Saturday that is just for you two. One small move a day.</p>
+      <div id="anticip"></div>
+    </div>
+    <div class="eyebrow">Date night, by mood</div>
+    <div class="card">
+      <div class="seg" id="moodSeg"><button class="on" data-mood="cozy">Cozy</button><button data-mood="out">Out</button><button data-mood="adventure">Adventure</button><button data-mood="reconnect">Reconnect</button></div>
+      <div id="planOut"></div>
+    </div>
+    <div class="eyebrow">Countdown to something</div>
+    <div class="card">
+      <p style="font-size:.92rem;color:var(--ink-dim)">Pick a date you are both looking forward to &mdash; a night away, an anniversary, a plain old Friday.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:.7rem 0"><input type="date" id="cdDate" style="flex:1;min-width:180px"><button class="btn btn-ghost" id="cdSet">Set</button></div>
+      <div id="cdOut"></div>
+    </div>
+  </section>
+
+  <p class="foot">Everything here lives only on this device &mdash; no accounts, no internet, no one else sees it.<br><button id="changePin">Change PIN</button></p>
+</div>
+
+<nav class="tabs">
+  <div class="tabs-in">
+    <button class="tab on" data-tab="today"><svg viewBox="0 0 24 24"><path d="M12 20.5S4.7 15.7 2.4 11.2A4.9 4.9 0 0 1 12 6.2a4.9 4.9 0 0 1 9.6 5c-2.3 4.5-9.6 9.3-9.6 9.3z"/></svg>Today</button>
+    <button class="tab" data-tab="play"><svg viewBox="0 0 24 24"><path d="M8 5.5h8a4.5 4.5 0 0 1 4.5 4.5v1.5a4.5 4.5 0 0 1-4.5 4.5H8A4.5 4.5 0 0 1 3.5 11.5V10A4.5 4.5 0 0 1 8 5.5z"/><path d="M7 10.5h4M9 8.5v4M15 10h.01M17.5 12h.01"/></svg>Play</button>
+    <button class="tab" data-tab="desire"><svg viewBox="0 0 24 24"><path d="M12 3.5c2.5 3 4 5.3 4 7.9a4 4 0 1 1-8 0c0-1.2.4-2.3 1-3.3.3 1.1 1 1.9 1.9 2.2-.4-2.5.2-4.7 1.1-6.8z"/></svg>Desire</button>
+    <button class="tab" data-tab="us"><svg viewBox="0 0 24 24"><circle cx="9" cy="8.2" r="3"/><circle cx="16" cy="9.6" r="2.3"/><path d="M3.6 19c.6-3 2.9-4.6 5.4-4.6s4.8 1.6 5.4 4.6"/><path d="M15.6 14.7c1.9.3 3.5 1.6 4 3.8"/></svg>Us</button>
+    <button class="tab" data-tab="plan"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 9.5h17M8 3.5v3M16 3.5v3M8 13.5h3M8 16.5h6"/></svg>Plan</button>
+  </div>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<div id="lock">
+  <div class="lock-card" id="lockCard">
+    <div class="lock-mono">Us</div>
+    <div class="lock-rule"></div>
+    <div class="lock-title" id="lockTitle">Enter your PIN</div>
+    <div class="dots" id="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+    <div class="keypad" id="keypad">
+      <button class="key" data-key="1">1</button><button class="key" data-key="2">2</button><button class="key" data-key="3">3</button>
+      <button class="key" data-key="4">4</button><button class="key" data-key="5">5</button><button class="key" data-key="6">6</button>
+      <button class="key" data-key="7">7</button><button class="key" data-key="8">8</button><button class="key" data-key="9">9</button>
+      <button class="key blank"></button><button class="key" data-key="0">0</button>
+      <button class="key del" data-key="del"><svg viewBox="0 0 24 24"><path d="M9 6h9a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H9L3 12z"/><path d="M12 9.5l4 5M16 9.5l-4 5"/></svg></button>
+    </div>
+    <p class="lock-hint" id="lockHint"></p>
+  </div>
+</div>
+
+<script>
+/* ---------- content ---------- */
+const DATA = {
+  emo:[
+    "Ask: \u201cWhat was the hardest part of your day?\u201d \u2014 then just listen. Don\u2019t fix anything.",
+    "Name one thing they did this week that you noticed and appreciated.",
+    "Send a voice note saying what you love about them. No text \u2014 your actual voice.",
+    "Share a memory of the first time you felt like a team.",
+    "Ask: \u201cWhat\u2019s one thing you\u2019re carrying right now that I could help with?\u201d",
+    "Give a twenty-second hug before you say anything else today.",
+    "Tell them one thing you\u2019re looking forward to doing with them.",
+    "Ask what they need this week \u2014 rest, help, play, or space \u2014 and believe the answer."
+  ],
+  play:[
+    "Text them a terrible pun at a random time today.",
+    "Challenge them to best-of-five thumb wars. Loser makes the tea.",
+    "Play the song you first dated to and dance badly in the kitchen.",
+    "Invent a silly nickname for them and use it all day, deadpan.",
+    "Do two-minute impressions of each other. Keep it kind.",
+    "Write the worst possible review of your own cooking together.",
+    "Plan a fake thirty-second advert for your marriage. Pitch it out loud."
+  ],
+  phy:[
+    "Kiss for six seconds. Count it out loud.",
+    "Sit close enough to touch while you watch something tonight.",
+    "Give a five-minute shoulder rub. No strings attached.",
+    "Hold hands on the walk to the car or the shop.",
+    "Cuddle for ten minutes before sleep, phones in the other room.",
+    "Slow-dance to one song in the living room.",
+    "Greet them with a real hug at the door when they get home."
+  ],
+  desireDaily:[
+    "Tonight, kiss them like you mean it \u2014 not a peck. Then stop, and go about your evening.",
+    "Tell them one thing you want to do to them later. Just the one.",
+    "Sleep naked tonight. No explanation offered.",
+    "Text them at 3pm: \u201cI\u2019ve been thinking about you.\u201d Say no more than that.",
+    "Kiss their neck as you pass behind them. Carry on like nothing happened.",
+    "When you get into bed, put your hand on their skin and leave it there.",
+    "Tell them a thing they do that turns you on. Out loud.",
+    "Ask: \u201cWhen was the last time you felt really wanted by me?\u201d"
+  ],
+  spark:[
+    "Thinking about you in the middle of my day. Nothing urgent \u2014 just you.",
+    "I keep replaying the other night. In a good way.",
+    "You in that shirt does something to me. That\u2019s all.",
+    "Clear Thursday. Just us. Don\u2019t make plans.",
+    "I miss the version of us that couldn\u2019t keep our hands off each other. Let\u2019s go find them.",
+    "You\u2019re the person I want to tell everything to first.",
+    "Come home to me tonight.",
+    "Coffee\u2019s on. You\u2019re on my mind."
+  ],
+  thisorthat:[
+    ["Slow morning","Late night"],
+    ["Candlelit dinner out","Takeaway and a blanket"],
+    ["Being surprised","Planning it together"],
+    ["Whispered words","Wordless touch"],
+    ["Cuddling that leads nowhere","Tension all day, then release"],
+    ["A weekend away","A stolen afternoon at home"],
+    ["Dancing together","Talking till 2am"],
+    ["Somewhere new, new us","Our old favourite spot"]
+  ],
+  die:[
+    "A kiss. Their choice where.",
+    "Say one thing you love about their body \u2014 out loud.",
+    "A memory: the moment you knew.",
+    "A sixty-second hug. No talking.",
+    "A question you\u2019ve never asked them.",
+    "Wildcard \u2014 you choose. Do something that makes them smile."
+  ],
+  dieSex:[
+    "Kiss somewhere they aren\u2019t expecting.",
+    "Undress them slowly \u2014 one item, then stop.",
+    "Ten minutes of touch. Clothes stay on.",
+    "Whisper what you want to do to them.",
+    "Take the lead for the next five minutes.",
+    "Their turn \u2014 they give you one instruction."
+  ],
+  passq:[
+    "Would you rather: a whole day of teasing with nothing else, or one hour of complete focus on each other?",
+    "Would you rather: be told exactly what they want, or figure it out together slowly?",
+    "This or that: slow morning, or late night?",
+    "This or that: whispered words, or wordless touch?",
+    "What is one thing you want more of from me \u2014 in bed, or out of it?",
+    "What is something you have wanted to ask me but been too shy to?",
+    "When do you feel most wanted by me?",
+    "What is one thing I could do this week that would make you feel desired?",
+    "What is the hardest thing for you to say out loud to me?",
+    "Would you rather: a night you look forward to all week, or one that just happens?",
+    "What is your favourite thing we do together \u2014 and why?",
+    "What did your family teach you about sex that you would like to unlearn?"
+  ],
+  neverHave:[
+    "Kissed someone else while we were together","Watched something alone without telling you",
+    "Thought about you while I was on my own","Sent a spicy photo","Wanted sex but never said so",
+    "Pretended to be asleep to avoid it","Faked an orgasm","Had sex where we could have been caught",
+    "Wanted to try something and been too shy to ask","Cried during or after sex",
+    "Had a fantasy about someone else","Wanted to watch you touch yourself",
+    "Touched myself while you were in the next room","Wanted you to take charge and said nothing",
+    "Been jealous of someone in your life","Googled how to want sex more",
+    "Wished we had sex more often","Wished we had sex less often",
+    "Kept a secret about my body","Wanted to ask you to try something new in bed"
+  ],
+  truths:[
+    "When did you last think about me that way?",
+    "What is something you want to try but haven\u2019t asked for?",
+    "What is the sexiest thing I do without realising?",
+    "What do you think about when you are alone?",
+    "What is one thing you would like me to do more of?"
+  ],
+  dares:[
+    "Give them a ten-second kiss. No peck.",
+    "Take one item of their clothing off. Their choice which.",
+    "Tell them one thing you want to do to them later.",
+    "Kiss the inside of their wrist.",
+    "Whisper something in their ear, then walk away.",
+    "Give them a slow back rub for two minutes.",
+    "Tell them your favourite part of their body.",
+    "Cover their eyes with your hand and kiss them somewhere new."
+  ],
+  q:{
+    light:[
+      "What\u2019s something small I do that you secretly love?",
+      "What\u2019s your favourite memory of our first year?",
+      "A free Saturday, no responsibilities \u2014 what do you want to do?",
+      "What song is \u201cus\u201d?",
+      "What did you think of me the first time we met?"
+    ],
+    deep:[
+      "When did you last feel really close to me \u2014 and what was happening?",
+      "What\u2019s something you\u2019ve wanted to tell me but haven\u2019t found the moment?",
+      "What do you need more of from me that isn\u2019t about sex?",
+      "Where do you feel we\u2019re strongest as a couple right now?",
+      "What are you afraid of losing between us?"
+    ],
+    intimate:[
+      "What makes you feel most wanted by me?",
+      "What\u2019s something you\u2019d like us to try \u2014 or try again?",
+      "When do you feel most confident and desirable?",
+      "What\u2019s something you\u2019ve never said out loud?",
+      "How do you like to be approached when you\u2019re in the mood?",
+      "What\u2019s one thing that puts you off that I should know?"
+    ]
+  },
+  convo:[
+    "What did you need from me this week that I didn\u2019t give?",
+    "When do you feel most connected to me \u2014 what am I doing?",
+    "What\u2019s one small thing I could do more often that would mean a lot?",
+    "What do you miss about how we used to be?",
+    "If we had one evening a week with no kids and no phones, what would you want to do?",
+    "What makes you feel safe enough to be honest with me?",
+    "What is the hardest thing for you to say out loud to me?",
+    "Would writing it down help more than saying it?",
+    "What did you grow up believing about sex that you would like to unlearn?",
+    "Is there something you have wanted to do but been too shy to ask?"
+  ],
+  ynm:[
+    "Making out like teenagers","Long, slow sex with no rush","Morning sex","Quick, urgent sex",
+    "Showering together","A massage that turns into sex","Receiving oral sex","Giving oral sex",
+    "Using our hands on each other","Taking turns giving and receiving","Using toys together",
+    "Talking dirty \u2014 saying exactly what I want","Telling you a fantasy out loud",
+    "Dressing up for each other","Sex somewhere other than the bed","Trying a new position",
+    "Being the one who initiates","Being pursued \u2014 feeling wanted","Being woken up for sex",
+    "A blindfold","Being held down \u2014 giving up control","Being told what to do","Role-play",
+    "Sex that builds slowly, drawn out","Trying something we\u2019ve never done",
+    "Telling each other what we think about alone","One of us touching ourselves while the other watches",
+    "Doing it side by side","Doing it together while apart \u2014 call or photos",
+    "Using a toy on myself while you watch"
+  ],
+  anticip:[
+    ["Day 1","Send a text that just says \u201cI\u2019ve been thinking about you.\u201d Nothing else."],
+    ["Day 2","Leave a note where they\u2019ll find it \u2014 a compliment they don\u2019t expect."],
+    ["Day 3","A six-second kiss at the door. Count it out loud."],
+    ["Day 4","Wear something they love. Say nothing about it."],
+    ["Day 5","A hand on the small of their back as you pass. Twice."],
+    ["Day 6","Tell them: \u201cTomorrow\u2019s ours.\u201d Watch their face."],
+    ["Day 7","The date. No phones. Whatever the plan, be fully there."]
+  ],
+  plans:{
+    cozy:[
+      "Phones in a drawer by 8pm \u2014 both of them.",
+      "Cook together: one chops, one stirs.",
+      "Eat by candlelight, no screens.",
+      "Ask three questions from the Deep pile.",
+      "One song. One slow dance in the kitchen.",
+      "An early night, together."
+    ],
+    out:[
+      "Book somewhere you\u2019ve never been \u2014 new place, new memory.",
+      "Dress up. The effort is the point.",
+      "One rule: no logistics talk. No bills, no schedules.",
+      "Ask: \u201cWhat do you want the next year of us to look like?\u201d",
+      "Walk somewhere after, holding hands.",
+      "Dessert back at home."
+    ],
+    adventure:[
+      "Pick something neither of you has done \u2014 climbing, pottery, a night market.",
+      "The nerves are the bonding. Do it badly, together.",
+      "Reward after: a drink and a debrief, laughing at yourselves.",
+      "Home to a bath or a massage to land the day."
+    ],
+    reconnect:[
+      "Beforehand, each write a short letter: \u201cWhat I\u2019ve missed about us.\u201d",
+      "Read them aloud to each other. No interrupting.",
+      "Then the Six-minute connect exercise.",
+      "Then open the Yes / No / Maybe list together.",
+      "End by planning one thing for next week to look forward to."
+    ]
+  }
+};
+
+/* ---------- state ---------- */
+const LSKEY = "us_app_v3";
+let state = { ynm:{you:{},partner:{}}, countdown:"", pin:"", hintSeen:false, shy:false };
+try{ const s = localStorage.getItem(LSKEY) || localStorage.getItem("us_app_v2") || localStorage.getItem("us_app_v1"); if(s) state = Object.assign(state, JSON.parse(s)); }catch(e){}
+function save(){ try{ localStorage.setItem(LSKEY, JSON.stringify(state)); }catch(e){} }
+const $ = (s,r=document)=>r.querySelector(s);
+const $$ = (s,r=document)=>Array.from(r.querySelectorAll(s));
+function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
+function daySeed(){ return Math.floor(Date.now()/86400000); }
+function esc(s){ return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove("show"),2100); }
+
+/* ---------- lock ---------- */
+const DEFAULT_PIN = "2012";
+let pinMode="unlock", pinBuf="", firstEntry="";
+const lock = $("#lock");
+function currentPin(){ return state.pin || DEFAULT_PIN; }
+function showLock(mode){ pinMode=mode||"unlock"; pinBuf=""; firstEntry=""; updateLock(); lock.classList.add("show"); }
+function hideLock(){ lock.classList.remove("show"); }
+function updateLock(){
+  const titles={unlock:"Enter your PIN",setNew:"Choose a new PIN",confirmNew:"Confirm your new PIN"};
+  $("#lockTitle").textContent=titles[pinMode];
+  $$("#dots .dot").forEach((d,i)=>d.classList.toggle("fill", i<pinBuf.length));
+  const h=$("#lockHint");
+  if(pinMode==="unlock" && !state.pin && !state.hintSeen){ h.textContent="First time? Your PIN is 2012. You can change it later."; }
+  else if(pinMode==="setNew"){ h.textContent="Pick four digits you\u2019ll remember."; }
+  else if(pinMode==="confirmNew"){ h.textContent="Once more, to be sure."; }
+  else { h.textContent=""; }
+}
+function pressKey(k){
+  if(k==="del"){ pinBuf=pinBuf.slice(0,-1); updateLock(); return; }
+  if(pinBuf.length>=4) return;
+  pinBuf+=k; updateLock();
+  if(pinBuf.length===4) setTimeout(finishEntry,160);
+}
+function finishEntry(){
+  if(pinMode==="unlock"){
+    if(pinBuf===currentPin()){ state.hintSeen=true; save(); hideLock(); toast("Welcome back"); }
+    else wrong();
+  } else if(pinMode==="setNew"){ firstEntry=pinBuf; pinBuf=""; pinMode="confirmNew"; updateLock(); }
+  else {
+    if(pinBuf===firstEntry){ state.pin=pinBuf; state.hintSeen=true; save(); pinMode="unlock"; pinBuf=""; hideLock(); toast("PIN updated"); }
+    else { toast("They didn\u2019t match \u2014 try again"); pinMode="setNew"; pinBuf=""; firstEntry=""; updateLock(); }
+  }
+}
+function wrong(){ const c=$("#lockCard"); c.classList.add("shake"); setTimeout(()=>c.classList.remove("shake"),440); pinBuf=""; setTimeout(updateLock,130); }
+$("#keypad").addEventListener("click",e=>{ const b=e.target.closest("[data-key]"); if(b) pressKey(b.dataset.key); });
+document.addEventListener("keydown",e=>{ if(!lock.classList.contains("show")) return; if(/^[0-9]$/.test(e.key)) pressKey(e.key); else if(e.key==="Backspace") pressKey("del"); });
+$("#lockNow").addEventListener("click",()=>showLock("unlock"));
+$("#changePin").addEventListener("click",()=>showLock("setNew"));
+
+/* ---------- tabs ---------- */
+$$(".tab").forEach(b=>b.addEventListener("click",()=>{
+  $$(".tab").forEach(x=>x.classList.remove("on")); b.classList.add("on");
+  $$(".view").forEach(v=>v.classList.remove("active"));
+  $("#view-"+b.dataset.tab).classList.add("active");
+  window.scrollTo(0,0);
+}));
+
+/* ---------- shy mode ---------- */
+function applyShy(){ document.body.classList.toggle("shy", !!state.shy); $("#shyToggle").classList.toggle("on", !!state.shy); }
+$("#shyToggle").addEventListener("click",()=>{ state.shy=!state.shy; save(); applyShy(); toast(state.shy?"Shy mode on \u2014 you can type instead":"Shy mode off"); });
+applyShy();
+
+/* ---------- today ---------- */
+function renderToday(){
+  const seed=daySeed();
+  [["emo","[data-emo]"],["play","[data-play]"],["phy","[data-phy]"],["desireDaily","[data-desire]"]].forEach(([k,sel],i)=>{
+    $(sel).textContent = DATA[k][(seed+i)%DATA[k].length];
+  });
+  $("[data-spark]").textContent = DATA.spark[seed%DATA.spark.length];
+}
+renderToday();
+let qLevel="light";
+const REDRAW={
+  emo:()=>{ $("[data-emo]").textContent=pick(DATA.emo); },
+  play:()=>{ $("[data-play]").textContent=pick(DATA.play); },
+  phy:()=>{ $("[data-phy]").textContent=pick(DATA.phy); },
+  desire:()=>{ $("[data-desire]").textContent=pick(DATA.desireDaily); },
+  spark:()=>{ $("[data-spark]").textContent=pick(DATA.spark); },
+  convo:()=>{ $("[data-convo]").textContent=pick(DATA.convo); },
+  q:()=>{ $("[data-qtext]").textContent=pick(DATA.q[qLevel]); }
+};
+$$("[data-redraw]").forEach(b=>b.addEventListener("click",()=>REDRAW[b.dataset.redraw]&&REDRAW[b.dataset.redraw]()));
+REDRAW.convo(); REDRAW.q();
+$("#copySpark").addEventListener("click",async()=>{ try{ await navigator.clipboard.writeText($("[data-spark]").textContent); toast("Copied \u2014 go send it"); }catch(e){ toast("Select and copy the line above"); } });
+
+/* ---------- this or that ---------- */
+let toi = daySeed() % DATA.thisorthat.length;
+function renderTOI(){ const pair=DATA.thisorthat[toi]; $$("[data-choice]").forEach((b,i)=>{ b.textContent=pair[i]; b.classList.remove("chosen"); }); $("#choiceHint").textContent="Tap your pick, then say why. Let them pick too \u2014 the \u201cwhy\u201d is the good part."; }
+renderTOI();
+$$("[data-choice]").forEach(b=>b.addEventListener("click",()=>{ $$("[data-choice]").forEach(x=>x.classList.remove("chosen")); b.classList.add("chosen"); $("#choiceHint").textContent="\u201c"+b.textContent+"\u201d \u2014 now tell them why. Then swap."; }));
+$("#nextChoice").addEventListener("click",()=>{ toi=(toi+1)%DATA.thisorthat.length; renderTOI(); });
+
+/* ---------- pass & reveal ---------- */
+let prIdx=0, prStage=0, prA="", prB="";
+function renderPR(){
+  const box=$("#prBody"); if(!box) return;
+  const q=DATA.passq[prIdx];
+  if(prStage===0){
+    box.innerHTML=`<p class="draw-text small">${q}</p>
+      <div class="passbanner">Your turn. No one else is looking.</div>
+      <textarea id="prA" placeholder="Type your answer..."></textarea>
+      <div class="btn-row" style="margin-top:.9rem"><button class="btn btn-primary" id="prLockA">Lock it in &amp; pass</button></div>`;
+    $("#prLockA").onclick=()=>{ prA=$("#prA").value.trim(); if(!prA){ toast("Type something first"); return; } prStage=1; renderPR(); };
+  } else if(prStage===1){
+    box.innerHTML=`<p class="draw-text small">${q}</p>
+      <div class="passbanner">Hand the phone over. Your partner\u2019s turn.</div>
+      <textarea id="prB" placeholder="Type your answer..."></textarea>
+      <div class="btn-row" style="margin-top:.9rem"><button class="btn btn-primary" id="prLockB">Reveal</button></div>`;
+    $("#prLockB").onclick=()=>{ prB=$("#prB").value.trim(); if(!prB){ toast("Type something first"); return; } prStage=2; renderPR(); };
+  } else {
+    box.innerHTML=`<p class="draw-text small">${q}</p>
+      <div class="reveal-head"><span>You</span><span>Your partner</span></div>
+      <div class="reveal-body"><span class="you">${esc(prA)}</span><span class="them">${esc(prB)}</span></div>
+      <div class="btn-row" style="margin-top:1rem"><button class="btn btn-ghost" id="prNext">Next question</button></div>`;
+    $("#prNext").onclick=()=>{ prIdx=(prIdx+1)%DATA.passq.length; prStage=0; prA=""; prB=""; renderPR(); };
+  }
+}
+renderPR();
+
+/* ---------- never have I ever ---------- */
+let nhStage=0, nhA=new Set(), nhB=new Set();
+function renderNH(){
+  const box=$("#nhBody"); if(!box) return;
+  if(nhStage<2){
+    const who = nhStage===0?"You":"Your partner";
+    const sel = nhStage===0?nhA:nhB;
+    box.innerHTML=`<div class="passbanner">${who} \u2014 tap everything you HAVE done.</div>
+      <div class="chips">${DATA.neverHave.map((t,i)=>`<button class="chip ${sel.has(i)?"on":""}" data-nh="${i}">${esc(t)}</button>`).join("")}</div>
+      <div class="btn-row"><button class="btn btn-primary" id="nhLock">${nhStage===0?"Lock in &amp; pass":"Reveal"}</button></div>`;
+    box.querySelectorAll("[data-nh]").forEach(b=>b.onclick=()=>{ const i=+b.dataset.nh; if(sel.has(i)) sel.delete(i); else sel.add(i); b.classList.toggle("on"); });
+    $("#nhLock").onclick=()=>{ nhStage++; renderNH(); };
+  } else {
+    const both=[],one=[],none=[];
+    DATA.neverHave.forEach((t,i)=>{ const a=nhA.has(i), b=nhB.has(i); if(a&&b) both.push(t); else if(a||b) one.push(t); else none.push(t); });
+    box.innerHTML=`
+      <p class="hint" style="margin-bottom:.4rem">You\u2019ve both done it:</p>
+      <ul class="match-list">${both.map(t=>`<li class="yes">${esc(t)}</li>`).join("") || '<li class="diff">Nothing yet \u2014 plenty still to discover.</li>'}</ul>
+      <p class="hint" style="margin:.8rem 0 .4rem">Only one of you has:</p>
+      <ul class="match-list">${one.map(t=>`<li class="diff">${esc(t)}</li>`).join("") || '<li class="diff">None.</li>'}</ul>
+      <p class="hint" style="margin:.8rem 0 .4rem">Neither of you \u2014 yet:</p>
+      <ul class="match-list">${none.slice(0,8).map(t=>`<li>${esc(t)}</li>`).join("") || '<li>You have done everything on the list. Impressive.</li>'}</ul>
+      <div class="btn-row" style="margin-top:1rem"><button class="btn btn-ghost" id="nhReset">Play again</button></div>`;
+    $("#nhReset").onclick=()=>{ nhStage=0; nhA=new Set(); nhB=new Set(); renderNH(); };
+  }
+}
+renderNH();
+
+/* ---------- truth or dare ---------- */
+$("#truthBtn").addEventListener("click",()=>{ $("#todOut").textContent=pick(DATA.truths); });
+$("#dareBtn").addEventListener("click",()=>{ $("#todOut").textContent=pick(DATA.dares); });
+
+/* ---------- dice ---------- */
+function wireDie(btnSel,dieSel,outSel,arr){
+  $(btnSel).addEventListener("click",()=>{
+    const die=$(dieSel), out=$(outSel); die.classList.add("rolling");
+    let ticks=0;
+    const iv=setInterval(()=>{ die.textContent=1+Math.floor(Math.random()*6);
+      if(++ticks>10){ clearInterval(iv); die.classList.remove("rolling"); const idx=Math.floor(Math.random()*6); die.textContent=idx+1; out.textContent=arr[idx]; }
+    },60);
+  });
+}
+wireDie("#rollDie","#die","#dieText",DATA.die);
+wireDie("#rollDie2","#die2","#die2Text",DATA.dieSex);
+
+/* ---------- question ladder ---------- */
+$$("#qSeg button").forEach(b=>b.addEventListener("click",()=>{ $$("#qSeg button").forEach(x=>x.classList.remove("on")); b.classList.add("on"); qLevel=b.dataset.q; $("[data-qtext]").textContent=pick(DATA.q[qLevel]); }));
+
+/* ---------- timer ---------- */
+const PHASES=[
+  "Round 1 \u2014 just look at each other and breathe. No talking.",
+  "Round 2 \u2014 take turns: \u201cOne thing I appreciate about you is\u2026\u201d",
+  "Round 3 \u2014 hold hands. \u201cOne thing I want more of with you is\u2026\u201d"
+];
+let tSec=120,tPhase=0,tRun=false,tInt=null;
+function fmt(s){ return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0"); }
+function paintTimer(){ $("#timerNum").textContent=fmt(tSec); $("#timerPhase").textContent=PHASES[tPhase]; }
+paintTimer();
+$("#timerBtn").addEventListener("click",()=>{
+  if(tRun){ clearInterval(tInt); tRun=false; $("#timerBtn").textContent="Resume"; return; }
+  tRun=true; $("#timerBtn").textContent="Pause";
+  tInt=setInterval(()=>{ tSec--;
+    if(tSec<=0){ if(tPhase<2){ tPhase++; tSec=120; } else { clearInterval(tInt); tRun=false; $("#timerBtn").textContent="Start"; tPhase=0; tSec=120; paintTimer(); toast("Done \u2014 now stay a moment longer"); return; } }
+    paintTimer();
+  },1000);
+});
+$("#timerReset").addEventListener("click",()=>{ clearInterval(tInt); tRun=false; tPhase=0; tSec=120; $("#timerBtn").textContent="Start"; paintTimer(); });
+
+/* ---------- yes/no/maybe ---------- */
+function buildMap({listSel, segSel, outSel, key, list}){
+  const listEl=$(listSel), segEl=$(segSel), outEl=$(outSel);
+  state[key] = state[key] || {you:{},partner:{}};
+  let who = state[key].who || "you";
+  function render(){
+    listEl.innerHTML = list.map((label,i)=>{
+      const v=(state[key][who]||{})[i]||"";
+      const cell=(k,t)=>`<button data-i="${i}" data-v="${k}" class="${k} ${v===k?"on":""}">${t}</button>`;
+      return `<li><span class="label">${esc(label)}</span><span class="cycle">${cell("yes","Y")}${cell("maybe","M")}${cell("no","N")}</span></li>`;
+    }).join("");
+    outEl.innerHTML="";
+    Array.from(segEl.children).forEach(b=>b.classList.toggle("on", b.dataset.who===who));
+  }
+  segEl.addEventListener("click",e=>{ const b=e.target.closest("[data-who]"); if(!b) return; who=b.dataset.who; state[key].who=who; save(); render(); });
+  listEl.addEventListener("click",e=>{ const b=e.target.closest("button[data-v]"); if(!b) return; const i=b.dataset.i, v=b.dataset.v;
+    state[key][who]=state[key][who]||{}; state[key][who][i] = state[key][who][i]===v ? "" : v; save(); render(); });
+  render();
+  return { render,
+    compare(){
+      const y=state[key].you||{}, p=state[key].partner||{};
+      const matches=[], diffs=[];
+      list.forEach((label,i)=>{ const a=y[i], b=p[i];
+        if(a==="yes"&&b==="yes") matches.push(label);
+        else if(a&&b&&a!==b) diffs.push(label+" \u2014 you: "+a+", them: "+b); });
+      if(!matches.length && !diffs.length){ outEl.innerHTML=`<p class="hint">Fill in both sides first \u2014 switch between \u201cYou\u201d and \u201cYour partner\u201d above, or send your half as a link.</p>`; return; }
+      let html="";
+      if(matches.length) html+=`<p class="hint" style="margin-bottom:.4rem">You both said yes \u2014 start here:</p><ul class="match-list">${matches.map(m=>`<li class="yes">${esc(m)}</li>`).join("")}</ul>`;
+      if(diffs.length) html+=`<p class="hint" style="margin:.8rem 0 .4rem">Worth a gentle conversation:</p><ul class="match-list">${diffs.map(m=>`<li class="diff">${esc(m)}</li>`).join("")}</ul>`;
+      outEl.innerHTML=html;
+    },
+    clear(){ state[key]={you:{},partner:{},who}; save(); render(); }
+  };
+}
+const ynmMap = buildMap({ listSel:"#ynmList", segSel:"#ynmSeg", outSel:"#ynmOut", key:"ynm", list:DATA.ynm });
+$("#ynmCompare").addEventListener("click",()=>ynmMap.compare());
+$("#ynmClear").addEventListener("click",()=>{ ynmMap.clear(); toast("Cleared"); });
+$("#ynmShare").addEventListener("click",async()=>{
+  try{
+    const payload=btoa(unescape(encodeURIComponent(JSON.stringify(state.ynm.you||{}))));
+    const url=location.origin+location.pathname+"#a="+payload;
+    await navigator.clipboard.writeText(url);
+    toast("Link copied \u2014 send it to your partner");
+  }catch(e){ toast("Copy failed \u2014 try the compare button instead"); }
+});
+
+/* ---------- plan ---------- */
+$("#anticip").innerHTML = DATA.anticip.map(([d,t])=>`<div class="plan-step"><span class="dot"></span><span class="txt"><strong>${d}.</strong> ${t}</span></div>`).join("");
+let mood="cozy";
+function renderPlan(){ $("#planOut").innerHTML = DATA.plans[mood].map(t=>`<div class="plan-step"><span class="dot"></span><span class="txt">${t}</span></div>`).join(""); }
+renderPlan();
+$$("#moodSeg button").forEach(b=>b.addEventListener("click",()=>{ $$("#moodSeg button").forEach(x=>x.classList.remove("on")); b.classList.add("on"); mood=b.dataset.mood; renderPlan(); }));
+
+/* ---------- countdown ---------- */
+function renderCd(){
+  const out=$("#cdOut");
+  if(!state.countdown){ out.innerHTML=`<p class="hint">No date set yet.</p>`; return; }
+  const d=new Date(state.countdown+"T00:00:00"); const now=new Date(); now.setHours(0,0,0,0);
+  const days=Math.round((d-now)/86400000);
+  out.innerHTML = days>0
+    ? `<div style="display:flex;align-items:baseline;gap:10px"><span class="cd-num">${days}</span><span style="color:var(--ink-dim)">days to go</span></div><p class="hint" style="margin-top:.5rem">Anticipation is half the fun. Drop a hint today.</p>`
+    : `<p class="display" style="font-size:1.35rem;color:var(--wine);margin:.2rem 0 0">${days===0?"It\u2019s today.":"That was "+Math.abs(days)+" days ago."}</p>`;
+}
+renderCd();
+$("#cdDate").value = state.countdown||"";
+$("#cdSet").addEventListener("click",()=>{ const v=$("#cdDate").value; if(!v){ toast("Pick a date first"); return; } state.countdown=v; save(); renderCd(); toast("Saved"); });
+
+/* ---------- import partner answers from link ---------- */
+(function(){
+  if(location.hash.indexOf("#a=")===0){
+    try{
+      const obj=JSON.parse(decodeURIComponent(escape(atob(location.hash.slice(3)))));
+      state.ynm = state.ynm || {you:{},partner:{}};
+      state.ynm.partner = obj; save(); ynmMap.render();
+      toast("Your partner\u2019s answers were loaded");
+      history.replaceState(null,"",location.pathname);
+    }catch(e){}
+  }
+})();
+
+/* ---------- boot ---------- */
+showLock("unlock");
+</script>
+</body>
+</html>
