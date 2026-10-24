@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#FBF8F3">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Us">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <title>Us</title>
 <style>
 :root{
@@ -829,6 +833,8 @@ $("#cfgTest").addEventListener("click",async()=>{
 $("#cfgSync").addEventListener("click",()=>syncNow(true));
 document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible"){ syncPull().catch(()=>{}); scheduleSync(); } });
 
+/* Ask the browser to keep this origin's storage for good, so a saved token and its answers are not evicted. */
+try{ if(navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(()=>{}); }catch(e){}
 renderPresence();
 if(cfg&&cfg.token){ setStatus("Ready."); syncNow(false); scheduleSync(); }
 showLock("unlock");
