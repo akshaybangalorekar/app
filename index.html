@@ -141,7 +141,7 @@ input:focus,textarea:focus{outline:2px solid var(--wine);outline-offset:1px}
 body.shy .shy-only{display:block}
 .attr{font-size:.78rem;color:var(--ink-faint);font-style:italic;margin-top:.6rem}
 nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:40;padding:9px 8px calc(env(safe-area-inset-bottom,0px) + 9px);background:color-mix(in srgb, var(--bg) 86%, transparent);backdrop-filter:saturate(1.4) blur(14px);border-top:1px solid var(--line-soft)}
-.tabs-in{max-width:600px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);gap:2px}
+.tabs-in{max-width:600px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:2px}
 .tab{border:none;background:transparent;cursor:pointer;padding:7px 2px 5px;border-radius:12px;display:flex;flex-direction:column;align-items:center;gap:5px;color:var(--ink-faint);font-family:var(--body);font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600;transition:.18s}
 .tab svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 .tab.on{color:var(--wine)}
@@ -181,24 +181,8 @@ nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:40;padding:9px 8px calc(
 
 <div class="wrap">
 
-  <!-- TODAY -->
-  <section class="view active" id="view-today">
-    <h1>Today&rsquo;s little bit of us</h1>
-    <p class="lead">Four small moments &mdash; heart, laugh, touch, and one for later. That is the whole ask today.</p>
-    <div class="card accent"><div class="card-head"><span class="pill rose">Heart</span></div><p class="draw-text" data-emo></p><div class="btn-row"><button class="btn btn-ghost" data-redraw="emo">Another</button></div></div>
-    <div class="card accent"><div class="card-head"><span class="pill gold">Play</span></div><p class="draw-text" data-play></p><div class="btn-row"><button class="btn btn-ghost" data-redraw="play">Another</button></div></div>
-    <div class="card accent"><div class="card-head"><span class="pill sage">Touch</span></div><p class="draw-text" data-phy></p><div class="btn-row"><button class="btn btn-ghost" data-redraw="phy">Another</button></div></div>
-    <div class="card accent"><div class="card-head"><span class="pill rose">For later</span></div><p class="draw-text" data-desire></p><div class="btn-row"><button class="btn btn-ghost" data-redraw="desire">Another</button></div></div>
-    <div class="eyebrow">A spark to send</div>
-    <div class="card">
-      <p class="note-out" data-spark>Thinking about you in the middle of my day. Nothing urgent &mdash; just you.</p>
-      <div class="btn-row"><button class="btn btn-primary" data-redraw="spark">New line</button><button class="btn btn-ghost" id="copySpark">Copy</button></div>
-      <p class="hint">Send it out of the blue. Anticipation starts long before you are in the same room.</p>
-    </div>
-  </section>
-
   <!-- PLAY -->
-  <section class="view" id="view-play">
+  <section class="view active" id="view-play">
     <h1>Play together</h1>
     <p class="lead">One phone, two people. Nothing here has to be said out loud &mdash; most of it you can type and reveal.</p>
 
@@ -403,8 +387,14 @@ nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:40;padding:9px 8px calc(
 
   <!-- HOW -->
   <section class="view" id="view-how">
-    <h1>How to actually do this</h1>
-    <p class="lead">Not questions this time &mdash; instructions. Do them in order and you do not have to invent anything.</p>
+    <h1>Techniques</h1>
+    <p class="lead">Pick one and read it. Written from what sex therapists actually teach &mdash; the detail most people never get told.</p>
+
+    <div class="eyebrow">Choose a technique</div>
+    <div class="card hero">
+      <div class="chips" id="techChips"></div>
+      <div id="techBody"></div>
+    </div>
 
     <div class="eyebrow">Do this tonight</div>
     <div class="card hero">
@@ -581,8 +571,7 @@ nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:40;padding:9px 8px calc(
 
 <nav class="tabs">
   <div class="tabs-in">
-    <button class="tab on" data-tab="today"><svg viewBox="0 0 24 24"><path d="M12 20.5S4.7 15.7 2.4 11.2A4.9 4.9 0 0 1 12 6.2a4.9 4.9 0 0 1 9.6 5c-2.3 4.5-9.6 9.3-9.6 9.3z"/></svg>Today</button>
-    <button class="tab" data-tab="play"><svg viewBox="0 0 24 24"><path d="M8 5.5h8a4.5 4.5 0 0 1 4.5 4.5v1.5a4.5 4.5 0 0 1-4.5 4.5H8A4.5 4.5 0 0 1 3.5 11.5V10A4.5 4.5 0 0 1 8 5.5z"/><path d="M7 10.5h4M9 8.5v4M15 10h.01M17.5 12h.01"/></svg>Play</button>
+    <button class="tab on" data-tab="play"><svg viewBox="0 0 24 24"><path d="M8 5.5h8a4.5 4.5 0 0 1 4.5 4.5v1.5a4.5 4.5 0 0 1-4.5 4.5H8A4.5 4.5 0 0 1 3.5 11.5V10A4.5 4.5 0 0 1 8 5.5z"/><path d="M7 10.5h4M9 8.5v4M15 10h.01M17.5 12h.01"/></svg>Play</button>
     <button class="tab" data-tab="desire"><svg viewBox="0 0 24 24"><path d="M12 3.5c2.5 3 4 5.3 4 7.9a4 4 0 1 1-8 0c0-1.2.4-2.3 1-3.3.3 1.1 1 1.9 1.9 2.2-.4-2.5.2-4.7 1.1-6.8z"/></svg>Desire</button>
     <button class="tab" data-tab="how"><svg viewBox="0 0 24 24"><path d="M4 5.2A1.7 1.7 0 0 1 5.7 3.5H11v16.6H5.7A1.7 1.7 0 0 0 4 21.8z"/><path d="M20 5.2a1.7 1.7 0 0 0-1.7-1.7H13v16.6h5.3a1.7 1.7 0 0 1 1.7 1.7z"/></svg>How</button>
     <button class="tab" data-tab="plan"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 9.5h17M8 3.5v3M16 3.5v3M8 13.5h3M8 16.5h6"/></svg>Plan</button>
@@ -796,6 +785,79 @@ const DATA = {
     ["Day 5","A hand on the small of their back as you pass. Twice."],
     ["Day 6","Tell them: \u201cTomorrow\u2019s ours.\u201d Watch their face."],
     ["Day 7","The date. No phones. Whatever the plan, be fully there."]
+  ],
+  techniques:[
+    { name:"Oral \u2014 him", intro:"The most common mistake is going too fast and forgetting to use your hands. This is the technique the sex therapists actually teach.", steps:[
+      "Do not dive straight in. Kiss, work down the neck and chest, kiss the inside of the thighs. Anticipation releases more dopamine than the act itself \u2014 teasing is not wasted time.",
+      "Get comfortable first. Kneel between his legs while he lies back, or kneel in front of him if he stands. Put a cushion under your knees. If you are uncomfortable you will not last.",
+      "Ask, or just say it out loud: \u201cDo you want me to go down on you?\u201d Consent is not a mood-killer. It is the opposite.",
+      "Start with your tongue, not your mouth. Flat side of the tongue up the shaft; then the tip to trace around the head and the little ridge underneath it. That ridge is the most sensitive spot on the whole penis.",
+      "Then bring in your hand. Wrap your hand around the shaft and put your mouth over the head, sealing your lips against your hand like an O. Move the two together, up and down.",
+      "Keep it wet. Saliva or lube. Dry is uncomfortable for him and exhausting for you.",
+      "Watch your teeth. Cover them with your lips \u2014 use lips and tongue for contact.",
+      "Vary it. Slow, then faster. Add a twist of the wrist as you move. Take your time at the base and quicker at the top. Two or three moves is plenty; do not try twenty.",
+      "Take breaks. Breathe through your nose. When your jaw tires, switch to just your hand and come back. Nobody is timing you.",
+      "Read his body, not the clock. Hips pushing up, his hand on your head, holding his breath \u2014 keep doing exactly what you are doing. When he gets close, do not change a thing.",
+      "Never ask \u201care you close yet?\u201d It turns pleasure into pressure."
+    ], src:"Sex therapists quoted in Women\u2019s Health and Healthline" },
+    { name:"Oral \u2014 her", intro:"For most women this is the easiest route to orgasm \u2014 the clitoris is the epicentre, and unlike penetration it does not depend on a position.", steps:[
+      "Start well before you get there. Kissing, her neck, her breasts and nipples, the inside of her thighs. Build it up. Most of oral sex is the lead-up.",
+      "Tease over the underwear first \u2014 stroke her through the fabric with your tongue or fingers before any skin contact.",
+      "The clitoris is the point, but do not attack it. Circle around it at first, graze it lightly, or use the flat of your tongue over the hood. It can be far too sensitive for direct pressure straight away.",
+      "Try the slow version: take fifteen or thirty seconds to slide your tongue slowly from top to bottom, then blow warm air along the wet line you have just made.",
+      "Vary the motion \u2014 up and down, side to side, a figure of eight, light suction, or trace letters with your tongue. Then, when you find one she responds to, stay on it. Constant changes stop her settling into the sensation.",
+      "Spread the outer lips gently to expose the clitoris more. It feels more intense.",
+      "Add your fingers if she wants them: one or two inside, curling in a \u201ccome here\u201d motion against the front wall, while your tongue stays on the clitoris. Do not jab \u2014 stroke.",
+      "Give your tongue a break \u2014 use your nose, your chin, or your fingers for a minute.",
+      "Look up. Make eye contact. Make a sound. Tell her she tastes good. It makes an astonishing difference.",
+      "If she comes, do not stop dead. The clitoris is too sensitive for direct contact right after \u2014 kiss her thighs, tease the lips, then go back if she wants.",
+      "Ask, do not guess. \u201cFaster? Softer? Right there?\u201d Every body is different, and she is the only expert on hers."
+    ], src:"Sex educators quoted in mindbodygreen, Women\u2019s Health and AARP" },
+    { name:"On top", intro:"Cowgirl. The best position for most women to actually orgasm \u2014 you control the pace, the angle and the depth, and you can get clitoral contact at the same time.", steps:[
+      "He lies on his back. You straddle him, facing him. Take a moment there before anything goes in.",
+      "Insert at your own pace. You are in charge of the angle from here on.",
+      "Grind, do not bounce. Rocking your hips back and forth against his pubic bone is safer and usually feels better. Bouncing risks him slipping out, and that can genuinely hurt him.",
+      "Lean slightly forward. That presses your clitoris against his body, which is where most of the pleasure is. This position is not really about penetration.",
+      "Change the angle to change the sensation. Tilt your pelvis toward his face for deeper; tilt away from him to aim at the front wall, where the G-spot is.",
+      "Kneel, or squat with your feet flat. Squatting gives more depth; kneeling gives more control and more grinding. Pillows under your knees if they ache.",
+      "Use lube, always. It is the difference between friction and pleasure.",
+      "Free his hands. Put them on your hips, or your breasts, or lean forward onto his chest. He can also hold your hips and thrust from below \u2014 that is the moment to let him take over.",
+      "If it is too deep, rise up and keep the strokes shallow, and say so. If it is not deep enough, put a pillow under his hips.",
+      "Lost the rhythm? Trace the letters of the word \u201ccoconut\u201d with your hips. It sounds silly and it works.",
+      "Take breaks. Breathe. Lean forward into him and let him do some of the work. You are not being graded on your performance.",
+      "Try reverse \u2014 facing his feet. Same position, completely different angle. The Kama Sutra\u2019s own advice for the woman on top was to move only the hips and keep the upper body still, which also protects your back."
+    ], src:"Sex therapists quoted in Women\u2019s Health, Healthline and Cosmopolitan; Seema Anand on the Kama Sutra" },
+    { name:"Hands on each other", intro:"This is the one that teaches you everything. Watching your partner touch themselves is a live tutorial in how they actually like to be touched \u2014 and it is the easiest door to open.", steps:[
+      "Ask outside the bedroom, in plain words: \u201cShow me what you like.\u201d It is short, and it is sexy.",
+      "Set the room first. Low light, phones away, lube within reach. Treat it like a date you actually planned.",
+      "Start with ordinary intimacy \u2014 kissing, unhurried touch. Skip that and it feels clinical.",
+      "Begin side by side, shoulders touching. That is the lowest-exposure way in, and the one to start with if you are nervous. Face-to-face is for when you are ready.",
+      "Both touch yourselves. Match nothing. Your own rhythm is the demonstration.",
+      "When it feels okay, move to taking turns \u2014 one watches while the other shows.",
+      "Then, if you both want to, hands on each other.",
+      "On him: start with a firm grip \u2014 you can be much firmer than you think. Use lube. Move up and down the shaft and pay attention to the ridge underneath the head. Make slight tweaks every minute or so: a little more pressure, a little faster, a twist of the wrist. When he is close, do not change a thing.",
+      "On her: start outside, over the underwear. Circles around the clitoris rather than directly on it. Use lube. If she wants fingers inside, curl them gently toward the front wall rather than pushing.",
+      "Ask only simple questions \u2014 \u201charder?\u201d, \u201clike that?\u201d \u2014 and one check-in is plenty. Constant commentary turns it into a meeting.",
+      "Watch their face and their breathing rather than guessing. If you finish first, stay present \u2014 keep a hand on them. Leaving the moment is the one genuinely deflating move.",
+      "Afterwards, say what you liked. If something did not work, wrap it in praise: \u201cI loved X \u2014 maybe not so much Y.\u201d"
+    ], src:"Sex therapists quoted in Women\u2019s Health, Healthline and goop \u2014 including Vanessa Marin on hand technique" },
+    { name:"The slow build", intro:"The Kama Sutra\u2019s whole point: the real excitement is before and after, not the act itself. And most women need far longer to warm up than most men.", steps:[
+      "Start it hours earlier, not in bed. A text at 3pm. A hand on the small of the back. That is foreplay.",
+      "Put the phones in another room. Actually another room.",
+      "Kiss properly \u2014 not a peck. The no-touch kiss: feather-light, one point of contact, and hold it. Do not grab or rush.",
+      "Undress each other one item at a time. Stop after each item and kiss the skin you have uncovered.",
+      "Do not go straight for the genitals. Neck, ears, collarbone, the inside of the wrist, the backs of the knees, the feet.",
+      "Use sound. Silence is for monks. A whisper counts when the child is asleep down the hall.",
+      "Use scent if you want to \u2014 the Kama Sutra\u2019s trick was a different perfume on different parts of the body, so your partner has to travel to find each one.",
+      "Do not eat a big meal right before. Leave two hours. The body digests or it desires, not both \u2014 and the wait is the anticipation.",
+      "Remember that one of you may be \u201cfire\u201d, ready fast, and one \u201cwater\u201d, needing time. The slow build is what lets you meet in the middle."
+    ], src:"Seema Anand on the Kama Sutra; Vanessa & Xander Marin on desire types" },
+    { name:"Sensate focus", intro:"The classic sex-therapy exercise for rebuilding touch when things have gone quiet. Three stages \u2014 do not rush them.", steps:[
+      "Stage one: touch, nothing else. Fifteen minutes each. One lies down, the other touches everywhere except the breasts and between the legs. No goal, no finishing. Say only what feels good. Then swap.",
+      "Stage two: add the rest. Same again, now including breasts and genitals \u2014 but still no goal and no rush to orgasm. This is a map-making exercise. Learn each other again.",
+      "Stage three: let it lead. Now you may finish. Stages one and two existed to take the pressure off and make the third one easy.",
+      "It will feel awkward at first. That is normal, and it passes. Persist for a few weeks before deciding it does not work."
+    ], src:"Masters and Johnson, standard sex therapy" }
   ],
   talks:[
     { name:"Say it", steps:[
@@ -1023,28 +1085,14 @@ $("#sigChips").addEventListener("click",e=>{
 });
 renderSignals();
 
-/* ---------- today ---------- */
-function renderToday(){
-  const seed=daySeed();
-  [["emo","[data-emo]"],["play","[data-play]"],["phy","[data-phy]"],["desireDaily","[data-desire]"]].forEach(([k,sel],i)=>{
-    $(sel).textContent = DATA[k][(seed+i)%DATA[k].length];
-  });
-  $("[data-spark]").textContent = DATA.spark[seed%DATA.spark.length];
-}
-renderToday();
+/* ---------- draw cards (needs conversation + question ladder) ---------- */
 let qLevel="light";
 const REDRAW={
-  emo:()=>{ $("[data-emo]").textContent=pick(DATA.emo); },
-  play:()=>{ $("[data-play]").textContent=pick(DATA.play); },
-  phy:()=>{ $("[data-phy]").textContent=pick(DATA.phy); },
-  desire:()=>{ $("[data-desire]").textContent=pick(DATA.desireDaily); },
-  spark:()=>{ $("[data-spark]").textContent=pick(DATA.spark); },
   convo:()=>{ $("[data-convo]").textContent=pick(DATA.convo); },
   q:()=>{ $("[data-qtext]").textContent=pick(DATA.q[qLevel]); }
 };
 $$("[data-redraw]").forEach(b=>b.addEventListener("click",()=>REDRAW[b.dataset.redraw]&&REDRAW[b.dataset.redraw]()));
 REDRAW.convo(); REDRAW.q();
-$("#copySpark").addEventListener("click",async()=>{ try{ await navigator.clipboard.writeText($("[data-spark]").textContent); toast("Copied \u2014 go send it"); }catch(e){ toast("Select and copy the line above"); } });
 
 /* ---------- this or that ---------- */
 let toi = daySeed() % DATA.thisorthat.length;
@@ -1136,6 +1184,16 @@ function makeStepper(segSel, bodySel, items){
 }
 makeStepper("#scriptSeg","#scriptBody",DATA.scripts);
 makeStepper("#talkSeg","#talkBody",DATA.talks);
+
+/* ---------- techniques ---------- */
+let techIdx=0;
+function renderTechChips(){ $("#techChips").innerHTML = DATA.techniques.map((t,i)=>`<button class="chip ${i===techIdx?"on":""}" data-tech="${i}">${esc(t.name)}</button>`).join(""); }
+function renderTech(){
+  const t=DATA.techniques[techIdx];
+  $("#techBody").innerHTML = `<p class="lead">${esc(t.intro)}</p><ol class="steps">${t.steps.map(s=>`<li>${esc(s)}</li>`).join("")}</ol><p class="attr">Source: ${esc(t.src)}</p>`;
+}
+$("#techChips").addEventListener("click",e=>{ const b=e.target.closest("[data-tech]"); if(!b) return; techIdx=+b.dataset.tech; renderTechChips(); renderTech(); });
+renderTechChips(); renderTech();
 
 /* ---------- lines to use ---------- */
 let lineIdx=Math.floor(Math.random()*DATA.lines.length);
