@@ -140,6 +140,16 @@ input:focus,textarea:focus{outline:2px solid var(--wine);outline-offset:1px}
 .shy-only{display:none}
 body.shy .shy-only{display:block}
 .attr{font-size:.78rem;color:var(--ink-faint);font-style:italic;margin-top:.6rem}
+.presence{max-width:600px;margin:0 auto;display:none;align-items:center;gap:8px;padding:0 0 10px;font-size:.74rem;color:var(--ink-faint)}
+.presence.show{display:flex}
+.pdot{width:8px;height:8px;border-radius:50%;background:var(--ink-faint);flex:none}
+.pdot.on{background:var(--sage);box-shadow:0 0 0 3px color-mix(in srgb,var(--sage) 22%,transparent)}
+.sheet{position:fixed;inset:0;z-index:95;display:none;background:var(--bg);overflow:auto;padding:calc(env(safe-area-inset-top,0px) + 22px) 22px 44px}
+.sheet.show{display:block;animation:fadeUp .3s ease}
+.sheet-in{max-width:600px;margin:0 auto}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint);font-weight:700;margin-bottom:.4rem}
+.sync-status{font-size:.82rem;color:var(--ink-dim);background:var(--paper2);border:1px solid var(--line-soft);border-radius:12px;padding:12px 14px;margin-bottom:16px;white-space:pre-wrap;word-break:break-word}
 nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:40;padding:9px 8px calc(env(safe-area-inset-bottom,0px) + 9px);background:color-mix(in srgb, var(--bg) 86%, transparent);backdrop-filter:saturate(1.4) blur(14px);border-top:1px solid var(--line-soft)}
 .tabs-in{max-width:600px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);gap:2px}
 .tab{border:none;background:transparent;cursor:pointer;padding:7px 2px 5px;border-radius:12px;display:flex;flex-direction:column;align-items:center;gap:5px;color:var(--ink-faint);font-family:var(--body);font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600;transition:.18s}
@@ -175,8 +185,12 @@ nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:40;padding:9px 8px calc(
 <header class="top">
   <div class="top-in">
     <div class="brand"><span class="logo">Us</span><span class="tag">for the two of you</span></div>
-    <button class="icon-btn" id="lockNow" title="Lock" aria-label="Lock"><svg viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2.2"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></svg></button>
+    <div style="display:flex;gap:8px">
+      <button class="icon-btn" id="settingsBtn" title="Sync" aria-label="Sync"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 3.6v2.3M12 18.1v2.3M4.9 7.7l2 1.1M17.1 15.2l2 1.1M4.9 16.3l2-1.1M17.1 8.8l2-1.1"/></svg></button>
+      <button class="icon-btn" id="lockNow" title="Lock" aria-label="Lock"><svg viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2.2"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></svg></button>
+    </div>
   </div>
+  <div class="presence" id="presence"><span class="pdot" id="pdot"></span><span id="ptext"></span></div>
 </header>
 
 <div class="wrap">
@@ -592,6 +606,28 @@ nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:40;padding:9px 8px calc(
 </nav>
 
 <div class="toast" id="toast"></div>
+
+<div class="sheet" id="sheet">
+  <div class="sheet-in">
+    <h1>Sync</h1>
+    <p class="lead">Keeps your answers and Pooja&rsquo;s in step, through a private GitHub repo. The key stays on this device only &mdash; it is never written into the app.</p>
+    <div class="sync-status" id="syncStatus">Not set up yet.</div>
+    <div class="field"><label>Your name on this device</label><input type="text" id="cfgName" placeholder="Akshay"></div>
+    <div class="field"><label>GitHub token</label><input type="password" id="cfgToken" placeholder="github_pat_..."></div>
+    <div class="field"><label>Owner</label><input type="text" id="cfgOwner" placeholder="akshaybangalorekar"></div>
+    <div class="field"><label>Private repo</label><input type="text" id="cfgRepo" placeholder="us-data"></div>
+    <div class="field"><label>Folder inside it</label><input type="text" id="cfgPath" placeholder="us"></div>
+    <div class="field"><label>Branch</label><input type="text" id="cfgBranch" placeholder="main"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="cfgSave">Save</button>
+      <button class="btn btn-ghost" id="cfgTest">Test</button>
+      <button class="btn btn-ghost" id="cfgSync">Sync now</button>
+      <button class="btn btn-quiet" id="cfgClose">Close</button>
+    </div>
+    <p class="hint" style="margin-top:1rem">The token needs only <strong>Contents: read and write</strong> on that one repo. Do not paste it anywhere else, and do not send it in a message. Put the same token on both phones, or make a separate one for each.</p>
+    <p class="hint">Enter the same repo and folder on both devices, with a different name each. Your device writes its own file; the other device reads it.</p>
+  </div>
+</div>
 
 <div id="lock">
   <div class="lock-card" id="lockCard">
@@ -1042,7 +1078,7 @@ const LSKEY = "us_app_v3";
 let state = { ynm:{you:{},partner:{}}, countdown:"", pin:"", hintSeen:false, shy:false, signals:{} };
 try{ const s = localStorage.getItem(LSKEY) || localStorage.getItem("us_app_v2") || localStorage.getItem("us_app_v1"); if(s) state = Object.assign(state, JSON.parse(s)); }catch(e){}
 if(!state.signals) state.signals={};
-function save(){ try{ localStorage.setItem(LSKEY, JSON.stringify(state)); }catch(e){} }
+function save(){ try{ localStorage.setItem(LSKEY, JSON.stringify(state)); }catch(e){} queuePush(); }
 const $ = (s,r=document)=>r.querySelector(s);
 const $$ = (s,r=document)=>Array.from(r.querySelectorAll(s));
 function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
@@ -1466,6 +1502,116 @@ $("#cdSet").addEventListener("click",()=>{ const v=$("#cdDate").value; if(!v){ t
     }catch(e){}
   }
 })();
+
+/* ---------- sync: GitHub as the data store ---------- */
+var SYNCKEY="us_sync_v1", cfg=null, partner=null, pulling=false, pushTimer=null, syncTimer=null, lastPush=0;
+try{ var s0=localStorage.getItem(SYNCKEY); if(s0) cfg=JSON.parse(s0); }catch(e){}
+function cfgSave(){ try{ localStorage.setItem(SYNCKEY, JSON.stringify(cfg)); }catch(e){} }
+function setSyncStatus(t){ var el=$("#syncStatus"); if(el) el.textContent=t; }
+function ghHeaders(){ return { "Authorization":"Bearer "+cfg.token, "Accept":"application/vnd.github+json", "X-GitHub-Api-Version":"2022-11-28" }; }
+function apiUrl(p){ var base="https://api.github.com/repos/"+encodeURIComponent(cfg.owner)+"/"+encodeURIComponent(cfg.repo)+"/contents/"; return base + String(p||"").split("/").filter(Boolean).map(encodeURIComponent).join("/"); }
+function b64e(s){ return btoa(unescape(encodeURIComponent(s))); }
+function b64d(s){ return decodeURIComponent(escape(atob(String(s).replace(/\n/g,"")))); }
+function cleanDir(){ return String(cfg.path||"").replace(/^\/|\/$/g,""); }
+function myFile(){ return cfg.name.toLowerCase().replace(/[^a-z0-9_-]/g,"") + ".json"; }
+function myPath(){ var d=cleanDir(); return (d? d+"/":"") + myFile(); }
+async function ghGet(p){
+  var r=await fetch(apiUrl(p)+"?ref="+encodeURIComponent(cfg.branch)+"&t="+Date.now(),{headers:ghHeaders(),cache:"no-store"});
+  if(r.status===404) return null;
+  if(!r.ok){ throw new Error("GitHub "+r.status+(r.status===401?" \u2014 token rejected":r.status===403?" \u2014 no access, or rate limit":"")); }
+  return r.json();
+}
+async function ghPut(p,obj,msg){
+  var sha=null;
+  try{ var cur=await ghGet(p); if(cur&&cur.sha) sha=cur.sha; }catch(e){}
+  var body={ message: msg||"update", content: b64e(JSON.stringify(obj)), branch: cfg.branch };
+  if(sha) body.sha=sha;
+  var r=await fetch(apiUrl(p),{method:"PUT",headers:ghHeaders(),body:JSON.stringify(body)});
+  if(!r.ok){ var t=await r.text(); throw new Error("GitHub "+r.status+" "+t.slice(0,140)); }
+  return r.json();
+}
+function myPayload(){
+  return { name: cfg.name, updated: Date.now(), online: true,
+    answers: { ynm: state.ynm.you||{}, signals: state.signals||{}, countdown: state.countdown||"" } };
+}
+async function syncPush(force){
+  if(!cfg||!cfg.token) return;
+  var now=Date.now(); if(!force && now-lastPush<120000) return;
+  lastPush=now;
+  await ghPut(myPath(), myPayload(), "update from "+cfg.name);
+}
+async function syncPull(){
+  if(!cfg||!cfg.token) return;
+  var list=await ghGet(cleanDir());
+  if(!Array.isArray(list)) return;
+  var mine=myFile();
+  var other=list.filter(function(f){ return f.type==="file" && f.name!==mine && /\.json$/.test(f.name); })[0];
+  if(!other) return;
+  var f=await ghGet(other.path); if(!f||!f.content) return;
+  var data; try{ data=JSON.parse(b64d(f.content)); }catch(e){ return; }
+  partner=data;
+  pulling=true;
+  try{
+    if(data.answers){
+      if(data.answers.ynm) state.ynm.partner=data.answers.ynm;
+      if(data.answers.signals) Object.keys(data.answers.signals).forEach(function(k){ if(data.answers.signals[k]) state.signals[k]=true; });
+      if(data.answers.countdown) state.countdown=data.answers.countdown;
+    }
+    save();
+    if(typeof ynmMap!=="undefined" && ynmMap) ynmMap.render();
+    if(typeof renderSignals==="function") renderSignals();
+    if(typeof renderCd==="function") renderCd();
+    var cdd=$("#cdDate"); if(cdd) cdd.value=state.countdown||"";
+  }catch(e){}
+  pulling=false;
+  renderPresence();
+}
+function ago(ms){ var m=Math.floor(ms/60000); if(m<1) return "just now"; if(m<60) return m+" min ago"; var h=Math.floor(m/60); if(h<24) return h+"h ago"; return Math.floor(h/24)+"d ago"; }
+function renderPresence(){
+  var el=$("#presence"), dot=$("#pdot"), txt=$("#ptext"); if(!el) return;
+  if(!cfg||!cfg.token||!partner){ el.classList.remove("show"); return; }
+  el.classList.add("show");
+  var age=Date.now()-(partner.updated||0);
+  var online=!!partner.online && age<7*60000;
+  dot.classList.toggle("on", online);
+  txt.textContent=(partner.name||"They")+(online? " \u2014 online now" : " \u2014 last seen "+ago(age));
+}
+function queuePush(){ if(!cfg||!cfg.token||pulling) return; clearTimeout(pushTimer); pushTimer=setTimeout(function(){ syncPush(true).catch(function(){}); }, 6000); }
+async function syncNow(force){
+  if(!cfg||!cfg.token){ setSyncStatus("Not set up yet."); return; }
+  try{ await syncPush(force); await syncPull(); setSyncStatus("Synced at "+new Date().toLocaleTimeString()); }
+  catch(e){ setSyncStatus("Sync failed: "+e.message); }
+}
+function scheduleSync(){
+  clearInterval(syncTimer);
+  if(!cfg||!cfg.token) return;
+  var online = partner && partner.online && (Date.now()-(partner.updated||0) < 7*60000);
+  var base = online ? 90000 : 300000;
+  syncTimer=setInterval(function(){ if(document.visibilityState==="visible") syncPull().catch(function(){}); }, base);
+}
+function loadCfg(){
+  $("#cfgName").value=(cfg&&cfg.name)||""; $("#cfgToken").value=(cfg&&cfg.token)||"";
+  $("#cfgOwner").value=(cfg&&cfg.owner)||""; $("#cfgRepo").value=(cfg&&cfg.repo)||"";
+  $("#cfgPath").value=(cfg&&cfg.path)||"us"; $("#cfgBranch").value=(cfg&&cfg.branch)||"main";
+}
+$("#settingsBtn").addEventListener("click",function(){ loadCfg(); $("#sheet").classList.add("show"); });
+$("#cfgClose").addEventListener("click",function(){ $("#sheet").classList.remove("show"); });
+$("#cfgSave").addEventListener("click",function(){
+  cfg={ name:$("#cfgName").value.trim(), token:$("#cfgToken").value.trim(), owner:$("#cfgOwner").value.trim(),
+        repo:$("#cfgRepo").value.trim(), path:$("#cfgPath").value.trim()||"us", branch:$("#cfgBranch").value.trim()||"main" };
+  if(!cfg.name||!cfg.token||!cfg.owner||!cfg.repo){ setSyncStatus("Fill in your name, token, owner and repo."); return; }
+  cfgSave(); setSyncStatus("Saved. Syncing\u2026"); scheduleSync(); syncNow(true);
+});
+$("#cfgTest").addEventListener("click",async function(){
+  if(!cfg||!cfg.token){ setSyncStatus("Save first."); return; }
+  setSyncStatus("Testing\u2026");
+  try{ var list=await ghGet(cleanDir()); setSyncStatus(list? ("Connected. "+list.length+" file(s) in "+(cleanDir()||"the repo root")+".") : "Connected, but that folder is empty \u2014 it will be created on the first sync."); }
+  catch(e){ setSyncStatus("Failed: "+e.message); }
+});
+$("#cfgSync").addEventListener("click",function(){ syncNow(true); });
+document.addEventListener("visibilitychange",function(){ if(document.visibilityState==="visible"){ syncPull().catch(function(){}); scheduleSync(); } });
+renderPresence();
+if(cfg&&cfg.token){ setSyncStatus("Ready."); syncNow(false); scheduleSync(); }
 
 /* ---------- boot ---------- */
 showLock("unlock");
