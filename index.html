@@ -333,7 +333,8 @@ nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:40;padding:9px 8px calc(
         <button class="btn btn-quiet" id="ynmClear">Clear</button>
       </div>
       <div id="ynmOut" style="margin-top:1rem"></div>
-      <p class="hint">Too shy to say it? Fill in your half, press <strong>Send my answers</strong>, and paste the link to your partner. Their phone fills itself in.</p>
+      <p class="hint" id="ynmShareHint">Too shy to say it? Fill in your half, press <strong>Send my answers</strong>, and paste the link to your partner. Their phone fills itself in.</p>
+      <p class="hint" id="ynmSyncNote" style="display:none">Syncing automatically &mdash; her answers appear in the <strong>Your partner</strong> column on their own. No link needed.</p>
     </div>
 
     <div class="eyebrow">Solo, and us</div>
@@ -1600,7 +1601,7 @@ $("#cfgSave").addEventListener("click",function(){
   cfg={ name:$("#cfgName").value.trim(), token:$("#cfgToken").value.trim(), owner:$("#cfgOwner").value.trim(),
         repo:$("#cfgRepo").value.trim(), path:$("#cfgPath").value.trim()||"us", branch:$("#cfgBranch").value.trim()||"main" };
   if(!cfg.name||!cfg.token||!cfg.owner||!cfg.repo){ setSyncStatus("Fill in your name, token, owner and repo."); return; }
-  cfgSave(); setSyncStatus("Saved. Syncing\u2026"); scheduleSync(); syncNow(true);
+  cfgSave(); applySyncUI(); setSyncStatus("Saved. Syncing\u2026"); scheduleSync(); syncNow(true);
 });
 $("#cfgTest").addEventListener("click",async function(){
   if(!cfg||!cfg.token){ setSyncStatus("Save first."); return; }
@@ -1610,6 +1611,14 @@ $("#cfgTest").addEventListener("click",async function(){
 });
 $("#cfgSync").addEventListener("click",function(){ syncNow(true); });
 document.addEventListener("visibilitychange",function(){ if(document.visibilityState==="visible"){ syncPull().catch(function(){}); scheduleSync(); } });
+function applySyncUI(){
+  var on=!!(cfg&&cfg.token);
+  var b=$("#ynmShare"), h=$("#ynmShareHint"), n=$("#ynmSyncNote");
+  if(b) b.style.display=on?"none":"";
+  if(h) h.style.display=on?"none":"";
+  if(n) n.style.display=on?"":"none";
+}
+applySyncUI();
 renderPresence();
 if(cfg&&cfg.token){ setSyncStatus("Ready."); syncNow(false); scheduleSync(); }
 
