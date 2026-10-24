@@ -235,6 +235,18 @@ nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:40;padding:9px 8px calc(
       </div>
     </div>
 
+    <div class="eyebrow">Make out every night</div>
+    <div class="card hero">
+      <p class="lead" style="margin-bottom:.7rem">One of their most-viral tips: they make out every single night. That is the whole rule.</p>
+      <ul class="clean">
+        <li>Two minutes. In the kitchen, on the sofa, at the door. Wherever you happen to be.</li>
+        <li>No goal. It is not foreplay and it does not have to lead anywhere.</li>
+        <li>No pecks. Kiss like you meant it the first time you did.</li>
+        <li>That is it. The point is to make touch ordinary again, so it stops being a big deal.</li>
+      </ul>
+      <p class="attr">Source: Vanessa &amp; Xander Marin, <em>Pillow Talks</em>.</p>
+    </div>
+
     <div class="eyebrow">Pass &amp; reveal</div>
     <div class="card hero">
       <p class="lead" style="margin-bottom:.9rem">The one for people who freeze when they have to speak. You answer, hand over the phone, they answer, then you both see it at once.</p>
@@ -291,6 +303,14 @@ nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:40;padding:9px 8px calc(
   <section class="view" id="view-desire">
     <h1>Desire</h1>
     <p class="lead">The honest part. For adults, and for the two of you only. Nothing here is a demand, and nothing has to be said aloud.</p>
+
+    <div class="eyebrow">The five sex talks</div>
+    <div class="card hero">
+      <p style="font-size:.92rem;color:var(--ink-dim)">Vanessa Marin is a sex therapist; Xander is her husband. Together they wrote <em>Sex Talks</em>, built on one idea: the best thing you can do for your sex life does not involve taking your clothes off. They break it into five conversations, and the order matters &mdash; you cannot fix desire until you have done connection and pleasure first.</p>
+      <div class="seg" id="talkSeg"></div>
+      <div id="talkBody"></div>
+      <p class="attr">Source: Vanessa &amp; Xander Marin, <em>Sex Talks: The Five Conversations That Will Transform Your Love Life</em>.</p>
+    </div>
 
     <div class="eyebrow">Yes / No / Maybe</div>
     <div class="card">
@@ -531,6 +551,23 @@ nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:40;padding:9px 8px calc(
       <div class="seg" id="moodSeg"><button class="on" data-mood="cozy">Cozy</button><button data-mood="out">Out</button><button data-mood="adventure">Adventure</button><button data-mood="reconnect">Reconnect</button></div>
       <div id="planOut"></div>
     </div>
+    <div class="eyebrow">Scheduling, the way they do it</div>
+    <div class="card hero">
+      <p class="lead" style="margin-bottom:.9rem">Their most argued-about idea. The short version: spontaneous sex is mostly a myth, and planning it is how adults with a child in the house actually have any.</p>
+      <ul class="clean">
+        <li><strong>Spontaneous sex is largely a myth.</strong> When you were dating you scheduled dates &mdash; and sex happened on those dates. You were never spontaneous. You were organised.</li>
+        <li><strong>Pick your type.</strong> A standing day. Or a morning check-in: &ldquo;do we want to today, and when?&rdquo; Or scan the month and mark the good windows. Or just plan the next one after each one.</li>
+        <li><strong>Put it as early in the evening as you can.</strong> 11:30pm is where desire goes to die. &ldquo;We are not watching TV until we have done this.&rdquo;</li>
+        <li><strong>Build the anticipation.</strong> Do what you did when you were dating: shower, shave, pick something to wear, send a text at 3pm. Count down to it.</li>
+        <li><strong>Lower the bar &mdash; agree a bare minimum.</strong> Sex does not have to mean penetration. Pick one thing you would both do on any night: naked cuddling, a massage, a make-out, side by side. That is all you are promising. More can happen, but nothing more is required.</li>
+        <li><strong>Take turns leading.</strong> One of you plans it and starts it each time. Some couples do &ldquo;king and queen nights&rdquo; &mdash; one person&rsquo;s pleasure all evening, then swap next time.</li>
+        <li><strong>Sex first, date second.</strong> Have sex <em>before</em> the date night, not after. By the time you are home and full you will not want to.</li>
+        <li><strong>Hate the phrase?</strong> Do not call it scheduled sex. Call it date night, or intentional intimacy. Same thing, friendlier name.</li>
+        <li><strong>One honest caveat.</strong> Scheduling only works if the sex you are having is good. It is not a fix for bad sex &mdash; it is a fix for no sex.</li>
+      </ul>
+      <p class="attr">Source: Vanessa &amp; Xander Marin, <em>Sex Talks</em>, and the <em>Pillow Talks</em> episode &ldquo;How To Schedule Sex.&rdquo;</p>
+    </div>
+
     <div class="eyebrow">Countdown to something</div>
     <div class="card">
       <p style="font-size:.92rem;color:var(--ink-dim)">Pick a date you are both looking forward to &mdash; a night away, an anniversary, a plain old Friday.</p>
@@ -759,6 +796,45 @@ const DATA = {
     ["Day 5","A hand on the small of their back as you pass. Twice."],
     ["Day 6","Tell them: \u201cTomorrow\u2019s ours.\u201d Watch their face."],
     ["Day 7","The date. No phones. Whatever the plan, be fully there."]
+  ],
+  talks:[
+    { name:"Say it", steps:[
+      "The talk: \u201cSex is a thing, and we have it.\u201d",
+      "This is the icebreaker. You are not solving anything, not complaining, not asking for anything. You are only naming that sex exists between you and can be spoken about.",
+      "Do it somewhere neutral \u2014 over chai, on a walk. Not in bed.",
+      "The words: \u201cI want us to be able to talk about sex. Not because something is wrong \u2014 because I want more of us.\u201d",
+      "Then stop. Let that be the whole conversation. It is enough for one day.",
+      "Why first: most couples only ever talk about sex when something has gone wrong. This is the opposite \u2014 you start on a good note."
+    ]},
+    { name:"Connect", steps:[
+      "The talk: \u201cWhat do we need to feel connected to each other?\u201d",
+      "Connection comes before desire. Emotional closeness is the doorway to physical closeness \u2014 if one is missing, the other is hard to find.",
+      "Each of you answers: what makes you feel close to me? Talking? Touch? Time? Being helped?",
+      "Then pick one of those things and actually do it this week.",
+      "A couple who feels connected all week has far less riding on any single night."
+    ]},
+    { name:"Desire", steps:[
+      "The talk: \u201cWhat do we each need to get turned on?\u201d",
+      "Desire is not a switch. Some people are spontaneous \u2014 wanting arrives on its own. Others are responsive \u2014 wanting arrives only after things have started.",
+      "Ask each other: \u201cDo you usually want it out of nowhere, or only once we have begun?\u201d Neither answer is wrong.",
+      "Then: what turns you on? And what turns you off? The turn-offs matter more \u2014 stress, tiredness, resentment, feeling touched-out.",
+      "Pick one turn-off and remove it this week. That does more than any new technique."
+    ]},
+    { name:"Pleasure", steps:[
+      "The talk: \u201cWhat do we each need to feel good?\u201d",
+      "This is the practical one \u2014 what you like, where, how fast, how long. Most couples never say any of it out loud.",
+      "Ask: \u201cWhat do you want more of? What should I do differently? What is something I do that you love?\u201d",
+      "Be specific. \u201cSlower\u201d, \u201cnot there\u201d, \u201cmore of that\u201d \u2014 these are complete sentences and nobody is offended.",
+      "This is where the Yes / No / Maybe list earns its keep. Do it together."
+    ]},
+    { name:"Explore", steps:[
+      "The talk: \u201cWhat should we try next?\u201d",
+      "Not extremity \u2014 variety. Change one small thing and it is new again.",
+      "Set up a \u201ctrying something new\u201d night, once a month or so. Give it a silly name.",
+      "Say the expectation out loud first: \u201cwe are just trying things, no pressure, no expectations.\u201d",
+      "It will probably be a bit awkward. That is normal and expected. The first attempt at anything is the worst one.",
+      "Then talk about it after. \u201cWhat was good?\u201d is the whole conversation."
+    ]}
   ],
   scripts:[
     { name:"Slow evening", steps:[
@@ -1036,28 +1112,30 @@ renderNH();
 $("#truthBtn").addEventListener("click",()=>{ $("#todOut").textContent=pick(DATA.truths); });
 $("#dareBtn").addEventListener("click",()=>{ $("#todOut").textContent=pick(DATA.dares); });
 
-/* ---------- script player ---------- */
-let scriptIdx=0, scriptStep=0;
-function renderScriptSeg(){
-  $("#scriptSeg").innerHTML = DATA.scripts.map((s,i)=>`<button class="${i===scriptIdx?"on":""}" data-scr="${i}">${esc(s.name)}</button>`).join("");
+/* ---------- stepper (scripts + the five talks) ---------- */
+function makeStepper(segSel, bodySel, items){
+  let idx=0, step=0;
+  const seg=()=>{ $(segSel).innerHTML = items.map((s,i)=>`<button class="${i===idx?"on":""}" data-scr="${i}">${esc(s.name)}</button>`).join(""); };
+  const body=()=>{
+    const s=items[idx], box=$(bodySel);
+    if(step>=s.steps.length){
+      box.innerHTML=`<p class="draw-text small">That is the whole thing. Nothing more is asked of you.</p>
+        <div class="btn-row"><button class="btn btn-primary" data-scr-restart>Start again</button><button class="btn btn-ghost" data-scr-next>Another</button></div>`;
+      box.querySelector("[data-scr-restart]").onclick=()=>{ step=0; body(); };
+      box.querySelector("[data-scr-next]").onclick=()=>{ idx=(idx+1)%items.length; step=0; seg(); body(); };
+      return;
+    }
+    box.innerHTML=`<p class="hint" style="margin-bottom:.4rem">Step ${step+1} of ${s.steps.length}</p>
+      <p class="draw-text small" style="font-family:var(--display);font-size:1.24rem;line-height:1.5;min-height:4.6em">${esc(s.steps[step])}</p>
+      <div class="btn-row"><button class="btn btn-primary" data-scr-go>${step===s.steps.length-1?"Done":"Next step"}</button><button class="btn btn-quiet" data-scr-back>Back</button></div>`;
+    box.querySelector("[data-scr-go]").onclick=()=>{ step++; body(); };
+    box.querySelector("[data-scr-back]").onclick=()=>{ if(step>0){ step--; body(); } };
+  };
+  $(segSel).addEventListener("click",e=>{ const b=e.target.closest("[data-scr]"); if(!b) return; idx=+b.dataset.scr; step=0; seg(); body(); });
+  seg(); body();
 }
-function renderScript(){
-  const s=DATA.scripts[scriptIdx]; const box=$("#scriptBody");
-  if(scriptStep>=s.steps.length){
-    box.innerHTML=`<p class="draw-text small">That is the whole thing. Nothing more is asked of you tonight.</p>
-      <div class="btn-row"><button class="btn btn-primary" id="scrRestart">Start again</button><button class="btn btn-ghost" id="scrNextScript">Another script</button></div>`;
-    $("#scrRestart").onclick=()=>{ scriptStep=0; renderScript(); };
-    $("#scrNextScript").onclick=()=>{ scriptIdx=(scriptIdx+1)%DATA.scripts.length; scriptStep=0; renderScriptSeg(); renderScript(); };
-    return;
-  }
-  box.innerHTML=`<p class="hint" style="margin-bottom:.4rem">Step ${scriptStep+1} of ${s.steps.length}</p>
-    <p class="draw-text small" style="font-family:var(--display);font-size:1.24rem;line-height:1.5;min-height:4.6em">${esc(s.steps[scriptStep])}</p>
-    <div class="btn-row"><button class="btn btn-primary" id="scrNext">${scriptStep===s.steps.length-1?"Done":"Next step"}</button><button class="btn btn-quiet" id="scrBack">Back</button></div>`;
-  $("#scrNext").onclick=()=>{ scriptStep++; renderScript(); };
-  $("#scrBack").onclick=()=>{ if(scriptStep>0){ scriptStep--; renderScript(); } };
-}
-$("#scriptSeg").addEventListener("click",e=>{ const b=e.target.closest("[data-scr]"); if(!b) return; scriptIdx=+b.dataset.scr; scriptStep=0; renderScriptSeg(); renderScript(); });
-renderScriptSeg(); renderScript();
+makeStepper("#scriptSeg","#scriptBody",DATA.scripts);
+makeStepper("#talkSeg","#talkBody",DATA.talks);
 
 /* ---------- lines to use ---------- */
 let lineIdx=Math.floor(Math.random()*DATA.lines.length);
