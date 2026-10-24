@@ -124,7 +124,7 @@ nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:40;padding:10px 10px cal
 .sheet-in,.play-in{max-width:560px;margin:0 auto}
 .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:26px}
 .topbar .name{font-family:var(--display);font-size:1.5rem;color:var(--wine)}
-.sync-status{font-size:.82rem;color:var(--ink-dim);background:var(--paper2);border-radius:12px;padding:14px 16px;margin-bottom:18px;word-break:break-word}
+.sync-status{font-size:.82rem;color:var(--ink-dim);background:var(--paper2);border-radius:12px;padding:14px 16px;margin-bottom:18px;word-break:break-word;white-space:pre-wrap}
 .field{margin-bottom:16px}
 .field label{display:block;font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint);font-weight:700;margin-bottom:.45rem}
 .toast{position:fixed;left:50%;bottom:110px;transform:translate(-50%,20px);background:var(--ink);color:var(--bg);padding:12px 22px;border-radius:99px;
@@ -239,7 +239,7 @@ nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:40;padding:10px 10px cal
     <div class="field"><label>Folder</label><input type="text" id="cfgPath" placeholder="us"></div>
     <div class="field"><label>Branch</label><input type="text" id="cfgBranch" placeholder="main"></div>
     <button class="big" id="cfgSave">Save</button>
-    <button class="ghost" id="cfgTest">Test</button>
+    <button class="ghost" id="cfgTest">Diagnose</button>
     <button class="tiny" id="cfgSync">Sync now</button>
   </div>
 </div>
@@ -749,11 +749,16 @@ $("#cdSet").addEventListener("click",()=>{ const v=$("#cdDate").value; if(!v) re
 renderCd();
 
 /* ---------- sync ---------- */
-var SYNCKEY="us_sync_v1", cfg=null, partner=null, pulling=false, pushTimer=null, syncTimer=null, lastPush=0;
+var SYNCKEY="us_sync_v1", cfg=null, partner=null, pulling=false, pushTimer=null, syncTimer=null, lastPush=0, syncErr="";
 try{ var s0=localStorage.getItem(SYNCKEY); if(s0) cfg=JSON.parse(s0); }catch(e){}
 function cfgSave(){ try{ localStorage.setItem(SYNCKEY,JSON.stringify(cfg)); }catch(e){} }
 function setStatus(t){ const el=$("#syncStatus"); if(el) el.textContent=t; }
-function ghHeaders(){ return { "Authorization":"Bearer "+cfg.token, "Accept":"application/vnd.github+json", "X-GitHub-Api-Version":"2022-11-28" }; }
+function ghHeaders(json){ const h={ "Authorization":"Bearer "+cfg.token, "Accept":"application/vnd.github+json", "X-GitHub-Api-Version":"2022-11-28" }; if(json) h["Content-Type"]="application/json"; return h; }
+async function ghErr(r){
+  let m=""; try{ const j=await r.json(); if(j&&j.message) m=j.message; }catch(e){}
+  if(!m){ try{ m=(await r.text()).slice(0,140); }catch(e){} }
+  return "HTTP "+r.status+(m? " \u2014 "+m : "");
+}
 function apiUrl(p){ return "https://api.github.com/repos/"+encodeURIComponent(cfg.owner)+"/"+encodeURIComponent(cfg.repo)+"/contents/"+String(p||"").split("/").filter(Boolean).map(encodeURIComponent).join("/"); }
 function cleanDir(){ return String(cfg.path||"").replace(/^\/|\/$/g,""); }
 function myFile(){ return cfg.name.toLowerCase().replace(/[^a-z0-9_-]/g,"")+".json"; }
@@ -761,15 +766,15 @@ function myPath(){ const d=cleanDir(); return (d? d+"/":"")+myFile(); }
 async function ghGet(p){
   const r=await fetch(apiUrl(p)+"?ref="+encodeURIComponent(cfg.branch)+"&t="+Date.now(),{headers:ghHeaders(),cache:"no-store"});
   if(r.status===404) return null;
-  if(!r.ok) throw new Error("GitHub "+r.status+(r.status===401?" \u2014 token rejected":r.status===403?" \u2014 no access":"" ));
+  if(!r.ok) throw new Error(await ghErr(r));
   return r.json();
 }
 async function ghPut(p,obj,msg){
   let sha=null; try{ const c=await ghGet(p); if(c&&c.sha) sha=c.sha; }catch(e){}
   const body={ message:msg||"update", content:btoa(unescape(encodeURIComponent(JSON.stringify(obj)))), branch:cfg.branch };
   if(sha) body.sha=sha;
-  const r=await fetch(apiUrl(p),{method:"PUT",headers:ghHeaders(),body:JSON.stringify(body)});
-  if(!r.ok){ const t=await r.text(); throw new Error("GitHub "+r.status+" "+t.slice(0,120)); }
+  const r=await fetch(apiUrl(p),{method:"PUT",headers:ghHeaders(true),body:JSON.stringify(body)});
+  if(!r.ok) throw new Error(await ghErr(r));
   return r.json();
 }
 function myPayload(){ return { name:cfg.name, updated:Date.now(), online:true, answers:{ ynm:state.ynm.you||{}, signals:state.signals||{}, countdown:state.countdown||"", games:state.games||{} } }; }
@@ -797,15 +802,19 @@ async function syncPull(){
 function ago(ms){ const m=Math.floor(ms/60000); if(m<1) return "just now"; if(m<60) return m+" min ago"; const h=Math.floor(m/60); if(h<24) return h+"h ago"; return Math.floor(h/24)+"d ago"; }
 function renderPresence(){
   const el=$("#presence"); if(!el) return;
-  if(!cfg||!cfg.token||!partner){ el.classList.remove("show"); return; }
+  if(!cfg||!cfg.token){ el.classList.remove("show"); return; }
   el.classList.add("show");
+  if(syncErr){ $("#pdot").classList.remove("on"); $("#ptext").textContent="Sync problem \u2014 tap the gear"; return; }
+  if(!partner){ $("#pdot").classList.remove("on"); $("#ptext").textContent="Waiting for the first sync"; return; }
   const age=Date.now()-(partner.updated||0), on=!!partner.online&&age<7*60000;
   $("#pdot").classList.toggle("on",on);
-  $("#ptext").textContent=(partner.name||"Her")+(on?" \u2014 online now":" \u2014 last seen "+ago(age));
+  $("#ptext").textContent=(partner.name||"Them")+(on?" \u2014 online now":" \u2014 last seen "+ago(age));
 }
 function queuePush(){ if(!cfg||!cfg.token||pulling) return; clearTimeout(pushTimer); pushTimer=setTimeout(()=>syncPush(true).catch(()=>{}),6000); }
 async function syncNow(force){ if(!cfg||!cfg.token){ setStatus("Not set up yet."); return; }
-  try{ await syncPush(force); await syncPull(); setStatus("Synced "+new Date().toLocaleTimeString()); }catch(e){ setStatus("Sync failed: "+e.message); } }
+  try{ await syncPush(force); await syncPull(); syncErr=""; setStatus("Synced "+new Date().toLocaleTimeString()); }
+  catch(e){ syncErr=e.message||"failed"; setStatus("Sync failed: "+syncErr); }
+  renderPresence(); }
 function scheduleSync(){
   clearInterval(syncTimer); if(!cfg||!cfg.token) return;
   const on=partner&&partner.online&&(Date.now()-(partner.updated||0)<7*60000);
@@ -824,11 +833,37 @@ $("#cfgSave").addEventListener("click",()=>{
   if(!cfg.name||!cfg.token||!cfg.owner||!cfg.repo){ setStatus("Fill in name, token, owner and repo."); return; }
   cfgSave(); setStatus("Saved. Syncing\u2026"); scheduleSync(); syncNow(true);
 });
+async function diagnose(){
+  const L=[];
+  L.push("Repo: "+cfg.owner+"/"+cfg.repo+"    Folder: "+(cleanDir()||"(root)")+"    Branch: "+cfg.branch);
+  L.push("Your file: "+myPath());
+  L.push("Token: "+(cfg.token? cfg.token.slice(0,11)+"\u2026 ("+cfg.token.length+" chars)" : "MISSING"));
+  L.push("");
+  try{
+    const r=await fetch("https://api.github.com/repos/"+encodeURIComponent(cfg.owner)+"/"+encodeURIComponent(cfg.repo),{headers:ghHeaders(),cache:"no-store"});
+    if(!r.ok){ L.push("1. Repo access: FAILED \u2014 "+await ghErr(r)); return L.join("\n"); }
+    const j=await r.json();
+    L.push("1. Repo access: OK ("+(j.private?"private":"PUBLIC")+")");
+  }catch(e){ L.push("1. Repo access: FAILED \u2014 "+e.message); return L.join("\n"); }
+  try{
+    const l=await ghGet(cleanDir());
+    L.push("2. Read folder: "+(Array.isArray(l)? "OK, "+l.length+" file(s)" : "empty \u2014 will be created"));
+  }catch(e){ L.push("2. Read folder: FAILED \u2014 "+e.message); return L.join("\n"); }
+  try{
+    await ghPut(myPath(), myPayload(), "diagnostic write");
+    L.push("3. Write: OK");
+  }catch(e){ L.push("3. Write: FAILED \u2014 "+e.message); return L.join("\n"); }
+  try{
+    await syncPull();
+    L.push("4. Read partner: "+(partner? "OK \u2014 "+partner.name : "no partner file yet"));
+  }catch(e){ L.push("4. Read partner: FAILED \u2014 "+e.message); }
+  L.push(""); L.push("All good. Press Sync now.");
+  return L.join("\n");
+}
 $("#cfgTest").addEventListener("click",async()=>{
-  if(!cfg||!cfg.token){ setStatus("Save first."); return; }
-  setStatus("Testing\u2026");
-  try{ const l=await ghGet(cleanDir()); setStatus(l? "Connected. "+l.length+" file(s) there." : "Connected. Folder empty \u2014 it will be created on first sync."); }
-  catch(e){ setStatus("Failed: "+e.message); }
+  if(!cfg||!cfg.token){ setStatus("Save first \u2014 fill the fields and press Save."); return; }
+  setStatus("Checking\u2026");
+  try{ setStatus(await diagnose()); }catch(e){ setStatus("Check failed: "+e.message); }
 });
 $("#cfgSync").addEventListener("click",()=>syncNow(true));
 document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible"){ syncPull().catch(()=>{}); scheduleSync(); } });
