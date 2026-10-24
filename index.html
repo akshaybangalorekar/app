@@ -93,7 +93,7 @@ ol.steps li strong{display:block;font-family:var(--display);font-weight:500;font
 .timer-num{font-family:var(--display);font-size:2.6rem;font-variant-numeric:tabular-nums;color:var(--wine)}
 .timer-phase{text-align:center;color:var(--ink-dim);font-size:.92rem;min-height:2.8em;max-width:26em;margin:0 auto}
 .seg{display:flex;background:var(--paper2);border:1px solid var(--line-soft);border-radius:99px;padding:4px;gap:4px;margin-bottom:16px}
-.seg button{flex:1;border:none;background:transparent;padding:10px 6px;border-radius:99px;cursor:pointer;font-family:var(--body);font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);transition:.18s}
+.seg button{flex:1;min-width:0;overflow-wrap:break-word;line-height:1.2;border:none;background:transparent;padding:10px 5px;border-radius:99px;cursor:pointer;font-family:var(--body);font-size:.66rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);transition:.18s}
 .seg button.on{background:var(--paper);color:var(--wine);box-shadow:var(--shadow)}
 .dmap{list-style:none;padding:0;margin:0}
 .dmap li{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line-soft)}
@@ -256,6 +256,14 @@ nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:40;padding:9px 8px calc(
       </div>
     </div>
 
+    <div class="eyebrow">Dares that escalate</div>
+    <div class="card">
+      <div class="seg" id="dareSeg"><button class="on" data-lvl="0">Gentle</button><button data-lvl="1">Bolder</button><button data-lvl="2">Boldest</button></div>
+      <p class="draw-text small" id="dareOut" style="text-align:center;min-height:3em">Pick a level, then draw.</p>
+      <div style="text-align:center"><button class="btn btn-primary" id="dareDraw">Draw a dare</button></div>
+      <p class="hint" style="text-align:center">Boldest is not a dare to be brave. It is permission, if you want it.</p>
+    </div>
+
     <div class="eyebrow">Roll for it</div>
     <div class="card">
       <div class="die" id="die">?</div>
@@ -376,9 +384,23 @@ nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:40;padding:9px 8px calc(
   <!-- HOW -->
   <section class="view" id="view-how">
     <h1>How to actually do this</h1>
-    <p class="lead">You asked how. Here it is in order, then the thinking behind it, then how to find the time with a child in the house.</p>
+    <p class="lead">Not questions this time &mdash; instructions. Do them in order and you do not have to invent anything.</p>
 
-    <div class="eyebrow">Tonight &mdash; the first three steps</div>
+    <div class="eyebrow">Do this tonight</div>
+    <div class="card hero">
+      <p class="lead" style="margin-bottom:.9rem">Pick a script, press next, and do each step in order. If you get stuck, you are allowed to just read the next line out loud.</p>
+      <div class="seg" id="scriptSeg"></div>
+      <div id="scriptBody"></div>
+    </div>
+
+    <div class="eyebrow">Lines you can use</div>
+    <div class="card">
+      <p>You do not have to invent anything. Borrow these.</p>
+      <div id="linesOut"></div>
+      <div class="btn-row" style="margin-top:.8rem"><button class="btn btn-ghost" id="linesNext">Another line</button></div>
+    </div>
+
+    <div class="eyebrow">The gentlest start</div>
     <div class="card hero">
       <p class="lead" style="margin-bottom:.9rem">Thirty minutes. No sex. This is just to break the ice, so do only this and stop.</p>
       <ol class="steps">
@@ -738,6 +760,68 @@ const DATA = {
     ["Day 6","Tell them: \u201cTomorrow\u2019s ours.\u201d Watch their face."],
     ["Day 7","The date. No phones. Whatever the plan, be fully there."]
   ],
+  scripts:[
+    { name:"Slow evening", steps:[
+      "Wait until your son is asleep. Put both phones in the kitchen, on charge, face down.",
+      "Dim the lights. Light one candle if you have one. Put on something slow and quiet.",
+      "Sit on the bed facing each other. Hold hands. Look at each other and breathe for one minute without speaking.",
+      "Take their hand and kiss the inside of the wrist. Slowly. Then the palm. Then each fingertip.",
+      "Kiss them properly \u2014 not a peck. Count to six before you stop.",
+      "Undress each other, one item at a time. Stop after each item and kiss the skin you have uncovered.",
+      "Lie down. One of you on your back, the other beside. For ten minutes, touch everywhere except the breasts and between the legs. No goal.",
+      "Swap over. Ten minutes the other way.",
+      "Now go where you were not allowed. Slowly. Take your time.",
+      "Afterwards: stay. Do not reach for a phone. Say one true thing about the other."
+    ]},
+    { name:"15 minutes", steps:[
+      "He is at school, or asleep. Lock the door. Set a fifteen-minute timer, then put the phone aside.",
+      "Do not get undressed. Start standing \u2014 against the wall, or the door.",
+      "Kiss for the first minute and nothing else.",
+      "One of you takes charge. The other just follows for the next five minutes.",
+      "Hands under clothes. No further than that.",
+      "If the timer goes, you may stop \u2014 or ignore it.",
+      "If you stop, finish with a kiss and go back to your day. That counted. It all counts."
+    ]},
+    { name:"First watch", steps:[
+      "Agree the words first: \u201cif either of us says stop, we stop, no questions.\u201d Say them out loud, once.",
+      "Lights low, but on. You both need to be able to see.",
+      "Sit or lie where you can see each other. Not under the covers.",
+      "Start together, not watching. Both touching yourselves, side by side. Eyes closed is allowed.",
+      "When it feels okay, open your eyes. Look at each other. Keep going.",
+      "Say one thing out loud \u2014 \u201cyou are beautiful\u201d, \u201cI want you\u201d \u2014 whatever is true.",
+      "Nothing has to happen after this. This was the whole thing.",
+      "Next time, you can reach for each other."
+    ]},
+    { name:"Morning", steps:[
+      "He is at school. You have until pick-up. Do not spend it planning.",
+      "Get back into bed with a cup of tea. No phones.",
+      "Lie facing each other and talk for five minutes about nothing important.",
+      "Then start. Slow, unhurried, in daylight \u2014 which feels more exposing, and is exactly why it is worth doing.",
+      "Stay in bed afterwards. That is the luxury: nowhere to be."
+    ]}
+  ],
+  lines:[
+    "To start something: \u201cCome here.\u201d",
+    "To start something: \u201cI want you. Now.\u201d",
+    "To start something: \u201cCome to bed with me.\u201d",
+    "At 3pm: \u201cThinking about tonight.\u201d",
+    "At 3pm: \u201cI want you. That is all.\u201d",
+    "In their ear: \u201cYou are beautiful.\u201d",
+    "In their ear: \u201cI have been thinking about this all day.\u201d",
+    "In their ear: \u201cDo not stop.\u201d",
+    "When you are nervous: \u201cI am nervous. That is why I want to.\u201d",
+    "Afterwards: \u201cThat was good.\u201d",
+    "Afterwards: \u201cI love being with you.\u201d",
+    "Afterwards: \u201cWhen can we do that again?\u201d",
+    "To ask for more: \u201cSlower.\u201d",
+    "To ask for more: \u201cAgain.\u201d",
+    "To stop: \u201cNot tonight \u2014 but Thursday.\u201d"
+  ],
+  daresLvl:[
+    ["Kiss for six seconds. Count it.","Kiss the back of their neck.","Hold their face and look at them for ten seconds.","Whisper one true thing in their ear.","Take their hand and hold it against your chest."],
+    ["Undress them to the waist.","Kiss them somewhere you have not before.","Tell them exactly what you want to do next.","Take their hand and place it where you want it.","Take one thing off yourself, slowly, while they watch."],
+    ["Take charge for five minutes. They do not move unless you say so.","Blindfold them with a scarf. Then do as you like.","Say out loud what you think about when you are alone.","Do it somewhere in the house you never have.","Tell them one thing you have never said out loud \u2014 then do it."]
+  ],
   plans:{
     cozy:[
       "Phones in a drawer by 8pm \u2014 both of them.",
@@ -785,10 +869,22 @@ function esc(s){ return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",
 function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove("show"),2100); }
 
 /* ---------- lock ---------- */
-const DEFAULT_PIN = "2012";
+/* The PIN is kept only as a salted hash, so it is not readable in the source. */
+function pinHash(s){
+  const str = "us.v3|" + s + "|salt";
+  let h = 5381;
+  for(let i=0;i<str.length;i++){ h = ((h<<5)+h) ^ str.charCodeAt(i); h = h>>>0; }
+  let g = 2166136261;
+  for(let i=0;i<str.length;i++){ g ^= str.charCodeAt(i); g = Math.imul(g,16777619)>>>0; }
+  let k = 0;
+  for(let i=str.length-1;i>=0;i--){ k = (Math.imul(k,31) + str.charCodeAt(i))>>>0; }
+  return h.toString(36)+"."+g.toString(36)+"."+k.toString(36);
+}
+const DEFAULT_PIN_HASH = "1943zr7.15pifzx.1d8lo10"; /* salted hash of the starting PIN */
+if(state.pin){ state.pinHash = pinHash(state.pin); delete state.pin; save(); }
 let pinMode="unlock", pinBuf="", firstEntry="";
 const lock = $("#lock");
-function currentPin(){ return state.pin || DEFAULT_PIN; }
+function currentPinHash(){ return state.pinHash || DEFAULT_PIN_HASH; }
 function showLock(mode){ pinMode=mode||"unlock"; pinBuf=""; firstEntry=""; updateLock(); lock.classList.add("show"); }
 function hideLock(){ lock.classList.remove("show"); }
 function updateLock(){
@@ -796,7 +892,7 @@ function updateLock(){
   $("#lockTitle").textContent=titles[pinMode];
   $$("#dots .dot").forEach((d,i)=>d.classList.toggle("fill", i<pinBuf.length));
   const h=$("#lockHint");
-  if(pinMode==="unlock" && !state.pin && !state.hintSeen){ h.textContent="First time? Your PIN is 2012. You can change it later."; }
+  if(pinMode==="unlock"){ h.textContent=""; }
   else if(pinMode==="setNew"){ h.textContent="Pick four digits you\u2019ll remember."; }
   else if(pinMode==="confirmNew"){ h.textContent="Once more, to be sure."; }
   else { h.textContent=""; }
@@ -809,11 +905,11 @@ function pressKey(k){
 }
 function finishEntry(){
   if(pinMode==="unlock"){
-    if(pinBuf===currentPin()){ state.hintSeen=true; save(); hideLock(); toast("Welcome back"); }
+    if(pinHash(pinBuf)===currentPinHash()){ state.hintSeen=true; save(); hideLock(); toast("Welcome back"); }
     else wrong();
   } else if(pinMode==="setNew"){ firstEntry=pinBuf; pinBuf=""; pinMode="confirmNew"; updateLock(); }
   else {
-    if(pinBuf===firstEntry){ state.pin=pinBuf; state.hintSeen=true; save(); pinMode="unlock"; pinBuf=""; hideLock(); toast("PIN updated"); }
+    if(pinBuf===firstEntry){ state.pinHash=pinHash(pinBuf); state.hintSeen=true; save(); pinMode="unlock"; pinBuf=""; hideLock(); toast("PIN updated"); }
     else { toast("They didn\u2019t match \u2014 try again"); pinMode="setNew"; pinBuf=""; firstEntry=""; updateLock(); }
   }
 }
@@ -939,6 +1035,42 @@ renderNH();
 /* ---------- truth or dare ---------- */
 $("#truthBtn").addEventListener("click",()=>{ $("#todOut").textContent=pick(DATA.truths); });
 $("#dareBtn").addEventListener("click",()=>{ $("#todOut").textContent=pick(DATA.dares); });
+
+/* ---------- script player ---------- */
+let scriptIdx=0, scriptStep=0;
+function renderScriptSeg(){
+  $("#scriptSeg").innerHTML = DATA.scripts.map((s,i)=>`<button class="${i===scriptIdx?"on":""}" data-scr="${i}">${esc(s.name)}</button>`).join("");
+}
+function renderScript(){
+  const s=DATA.scripts[scriptIdx]; const box=$("#scriptBody");
+  if(scriptStep>=s.steps.length){
+    box.innerHTML=`<p class="draw-text small">That is the whole thing. Nothing more is asked of you tonight.</p>
+      <div class="btn-row"><button class="btn btn-primary" id="scrRestart">Start again</button><button class="btn btn-ghost" id="scrNextScript">Another script</button></div>`;
+    $("#scrRestart").onclick=()=>{ scriptStep=0; renderScript(); };
+    $("#scrNextScript").onclick=()=>{ scriptIdx=(scriptIdx+1)%DATA.scripts.length; scriptStep=0; renderScriptSeg(); renderScript(); };
+    return;
+  }
+  box.innerHTML=`<p class="hint" style="margin-bottom:.4rem">Step ${scriptStep+1} of ${s.steps.length}</p>
+    <p class="draw-text small" style="font-family:var(--display);font-size:1.24rem;line-height:1.5;min-height:4.6em">${esc(s.steps[scriptStep])}</p>
+    <div class="btn-row"><button class="btn btn-primary" id="scrNext">${scriptStep===s.steps.length-1?"Done":"Next step"}</button><button class="btn btn-quiet" id="scrBack">Back</button></div>`;
+  $("#scrNext").onclick=()=>{ scriptStep++; renderScript(); };
+  $("#scrBack").onclick=()=>{ if(scriptStep>0){ scriptStep--; renderScript(); } };
+}
+$("#scriptSeg").addEventListener("click",e=>{ const b=e.target.closest("[data-scr]"); if(!b) return; scriptIdx=+b.dataset.scr; scriptStep=0; renderScriptSeg(); renderScript(); });
+renderScriptSeg(); renderScript();
+
+/* ---------- lines to use ---------- */
+let lineIdx=Math.floor(Math.random()*DATA.lines.length);
+function renderLine(){ $("#linesOut").innerHTML=`<p class="note-out" style="min-height:0">${esc(DATA.lines[lineIdx])}</p>`; }
+renderLine();
+$("#linesNext").addEventListener("click",()=>{ lineIdx=(lineIdx+1)%DATA.lines.length; renderLine(); });
+
+/* ---------- escalating dares ---------- */
+let dareLvl=0;
+function renderDare(){ $("#dareOut").textContent = DATA.daresLvl[dareLvl][Math.floor(Math.random()*DATA.daresLvl[dareLvl].length)]; }
+$("#dareSeg").addEventListener("click",e=>{ const b=e.target.closest("[data-lvl]"); if(!b) return; $$("#dareSeg button").forEach(x=>x.classList.remove("on")); b.classList.add("on"); dareLvl=+b.dataset.lvl; renderDare(); });
+$("#dareDraw").addEventListener("click",renderDare);
+renderDare();
 
 /* ---------- dice ---------- */
 function wireDie(btnSel,dieSel,outSel,arr){
