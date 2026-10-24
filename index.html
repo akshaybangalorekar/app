@@ -453,7 +453,7 @@ const SIGNALS=[
 
 /* ---------- state ---------- */
 const LSKEY="us_app_v4";
-let state={ ynm:{you:{},partner:{},who:"you"}, countdown:"", pinHash:"", signals:{} };
+let state={ ynm:{you:{},partner:{},who:"you"}, countdown:"", pinHash:"", signals:{}, games:{}, partnerGames:{} };
 try{ const s=localStorage.getItem(LSKEY)||localStorage.getItem("us_app_v3"); if(s) state=Object.assign(state,JSON.parse(s)); }catch(e){}
 if(!state.signals) state.signals={};
 function save(){ try{ localStorage.setItem(LSKEY,JSON.stringify(state)); }catch(e){} queuePush(); }
@@ -505,11 +505,7 @@ $$(".tab").forEach(b=>b.addEventListener("click",()=>{
 }));
 
 /* ---------- games ---------- */
-const b64e=o=>btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
-const b64d=s=>JSON.parse(decodeURIComponent(escape(atob(String(s).replace(/-/g,"+").replace(/_/g,"/")))));
-let incoming=null, cur=null;
-function link(id,payload){ return location.href.split("#")[0]+"#g="+id+"&d="+b64e(payload); }
-function copy(url,msg){ try{ navigator.clipboard.writeText(url).then(()=>toast(msg)).catch(()=>prompt("Copy this link:",url)); }catch(e){ prompt("Copy this link:",url); } }
+let cur=null;
 
 function renderGameList(){
   $("#gameList").innerHTML = Object.keys(GAMES).map(id=>{
@@ -522,10 +518,8 @@ $("#gameList").addEventListener("click",e=>{ const b=e.target.closest("[data-gam
 $("#playClose").addEventListener("click",()=>{ $("#play").classList.remove("show"); cur=null; });
 
 function openGame(id){
-  const g=GAMES[id];
-  const inc=(incoming && incoming.id===id)? incoming.data : null;
-  cur={ id, g, inc, his:null, hers:null, stage:"you" };
-  $("#playName").textContent=g.name;
+  cur={ id, g:GAMES[id], stage:"you", his:null, hers:null, touched:false };
+  $("#playName").textContent=cur.g.name;
   $("#play").classList.add("show"); window.scrollTo(0,0);
   renderGame();
 }
@@ -536,84 +530,120 @@ function renderGame(){
   if(g.type==="guess") return gGuess(box,g);
   return gDraw(box,g);
 }
+function mineOf(id){ return (state.games||{})[id]; }
+function theirsOf(id){ return (state.partnerGames||{})[id]; }
+function pn(){ return (partner&&partner.name)? partner.name : ""; }
+function savedMsg(){ return pn()? "Saved. It will appear on "+pn()+"'s phone." : "Saved. It will appear on the other phone."; }
+
+function waiting(box,id,msg){
+  box.innerHTML=`<div class="banner">${esc(msg)}</div>
+    <button class="ghost" id="gHand">Hand her the phone</button>
+    <button class="tiny" id="gRedo">Change my answers</button>
+    <button class="tiny" id="gDone">Done</button>`;
+  $("#gHand").onclick=()=>{ cur.stage="her"; cur.hers=null; cur.touched=false; renderGame(); };
+  $("#gRedo").onclick=()=>{ delete state.games[id]; save(); cur.stage="you"; cur.his=null; cur.hers=null; cur.touched=false; renderGame(); };
+  $("#gDone").onclick=()=>$("#play").classList.remove("show");
+}
+function playAgain(id,box,g){
+  box.insertAdjacentHTML("beforeend",`<button class="tiny" id="gAgain">Play again</button>`);
+  $("#gAgain").onclick=()=>{ delete state.games[id]; save(); cur.stage="you"; cur.his=null; cur.hers=null; cur.touched=false; renderGame(); };
+}
 
 function gPick(box,g){
-  if(cur.inc && cur.inc.p) return pickReveal(box,g,cur.inc.p,cur.inc.a);
+  const id=cur.id, mine=mineOf(id), theirs=theirsOf(id);
+  if(cur.stage!=="her" && mine && theirs) return pickReveal(box,g,mine.a,theirs.a,id);
+  if(cur.stage!=="her" && mine && !theirs) return waiting(box,id,savedMsg());
   const hers=cur.stage==="her";
   const arr = hers ? (cur.hers=cur.hers||new Array(g.items.length).fill(null)) : (cur.his=cur.his||new Array(g.items.length).fill(null));
-  let h=`<div class="banner">${hers?"Her turn":(cur.inc?"Her picks are in. Your turn.":"Your turn")}</div>`;
+  let h=`<div class="banner">${hers?(pn()?pn()+"'s turn":"Their turn"):(theirs?(pn()?pn()+" has played. Your turn.":"Your turn."):"Your turn")}</div>`;
   h+=g.items.map((it,i)=>`<div class="pair">
     <button class="opt ${arr[i]===0?"sel":""}" data-i="${i}" data-v="0">${esc(it[0])}</button>
     <button class="opt ${arr[i]===1?"sel":""}" data-i="${i}" data-v="1">${esc(it[1])}</button></div>`).join("");
-  h+=`<button class="big" id="gGo">${(cur.inc||hers)?"See how you compare":"Done"}</button>`;
+  h+=`<button class="big" id="gGo">Done</button>`;
   box.innerHTML=h;
-  box.querySelectorAll("[data-i]").forEach(b=>b.onclick=()=>{ arr[+b.dataset.i]=+b.dataset.v; gPick(box,g); });
+  box.querySelectorAll("[data-i]").forEach(b=>b.onclick=()=>{ arr[+b.dataset.i]=+b.dataset.v; cur.touched=true; gPick(box,g); });
   $("#gGo").onclick=()=>{
     if(arr.includes(null)){ toast("Pick one for every pair"); return; }
-    if(cur.inc) return pickReveal(box,g,cur.inc.a,arr);
-    if(hers) return pickReveal(box,g,cur.his,arr);
-    afterTurn(box,g,arr,"pick");
+    if(hers) return pickReveal(box,g,(mine&&mine.a)||cur.his,arr,id);
+    state.games[id]={a:arr}; save(); cur.touched=false; cur.his=null; cur.hers=null;
+    if(theirs) return pickReveal(box,g,arr,theirs.a,id);
+    renderGame();
   };
 }
-function pickReveal(box,g,his,hers){
+function pickReveal(box,g,his,hers,id){
   let n=0;
   const rows=g.items.map((it,i)=>{ const same=his[i]===hers[i]; if(same)n++;
-    return `<li class="${same?"y":"d"}">${same? "Both: <b>"+esc(it[his[i]])+"</b>" : "You: <b>"+esc(it[his[i]])+"</b> &nbsp;&middot;&nbsp; Her: <b>"+esc(it[hers[i]])+"</b>"}</li>`;
+    return `<li class="${same?"y":"d"}">${same? "Both: <b>"+esc(it[his[i]])+"</b>" : "You: <b>"+esc(it[his[i]])+"</b> &nbsp;&middot;&nbsp; "+(pn()||"Them")+": <b>"+esc(it[hers[i]])+"</b>"}</li>`;
   }).join("");
   box.innerHTML=`<div class="banner">You matched on ${n} of ${g.items.length}</div><ul class="res">${rows}</ul>`;
+  playAgain(id,box,g);
 }
 
 function gTap(box,g){
-  if(cur.inc && cur.inc.p) return tapReveal(box,g,cur.inc.p,cur.inc.a);
+  const id=cur.id, mine=mineOf(id), theirs=theirsOf(id);
+  if(cur.stage!=="her" && mine && theirs) return tapReveal(box,g,mine.a,theirs.a,id);
+  if(cur.stage!=="her" && mine && !theirs) return waiting(box,id,savedMsg());
   const hers=cur.stage==="her";
   const set = hers ? (cur.hers=cur.hers||new Set()) : (cur.his=cur.his||new Set());
-  let h=`<div class="banner">${hers?"Her turn":(cur.inc?"Her picks are in. Your turn.":"Tap everything you have done")}</div>`;
+  let h=`<div class="banner">${hers?(pn()?pn()+"'s turn":"Their turn"):(theirs?(pn()?pn()+" has played. Your turn.":"Your turn."):"Tap everything you have done")}</div>`;
   h+=`<div class="chips">${g.items.map((t,i)=>`<button class="chip ${set.has(i)?"on":""}" data-i="${i}">${esc(t)}</button>`).join("")}</div>`;
-  h+=`<button class="big" id="gGo">${(cur.inc||hers)?"See how you compare":"Done"}</button>`;
+  h+=`<button class="big" id="gGo">Done</button>`;
   box.innerHTML=h;
-  box.querySelectorAll("[data-i]").forEach(b=>b.onclick=()=>{ const i=+b.dataset.i; if(set.has(i)) set.delete(i); else set.add(i); b.classList.toggle("on"); });
+  box.querySelectorAll("[data-i]").forEach(b=>b.onclick=()=>{ const i=+b.dataset.i; if(set.has(i)) set.delete(i); else set.add(i); b.classList.toggle("on"); cur.touched=true; });
   $("#gGo").onclick=()=>{
     const arr=g.items.map((_,i)=>set.has(i)?1:0);
-    if(cur.inc) return tapReveal(box,g,cur.inc.a,arr);
-    if(hers) return tapReveal(box,g,cur.his,arr);
-    afterTurn(box,g,arr,"tap");
+    if(hers) return tapReveal(box,g,(mine&&mine.a)||cur.his,arr,id);
+    state.games[id]={a:arr}; save(); cur.touched=false; cur.his=null; cur.hers=null;
+    if(theirs) return tapReveal(box,g,arr,theirs.a,id);
+    renderGame();
   };
 }
-function tapReveal(box,g,his,hers){
+function tapReveal(box,g,his,hers,id){
   const both=[],one=[],none=[];
   g.items.forEach((t,i)=>{ const a=!!his[i], b=!!hers[i]; if(a&&b) both.push(t); else if(a||b) one.push(t); else none.push(t); });
   box.innerHTML=`<ul class="res">${both.map(t=>`<li class="y">${esc(t)}</li>`).join("")||'<li class="d">Nothing you share yet.</li>'}</ul>
     ${one.length?`<div class="stepnum" style="margin-top:1.4rem">Only one of you</div><ul class="res">${one.map(t=>`<li class="d">${esc(t)}</li>`).join("")}</ul>`:""}
     ${none.length?`<div class="stepnum" style="margin-top:1.4rem">Neither of you, yet</div><ul class="res">${none.slice(0,6).map(t=>`<li>${esc(t)}</li>`).join("")}</ul>`:""}`;
+  playAgain(id,box,g);
 }
 
 function gGuess(box,g){
-  if(g._q===undefined) g._q=Math.floor(Math.random()*g.prompts.length);
-  if(cur.inc){
-    const q=g.prompts[cur.inc.q]||g.prompts[0];
-    box.innerHTML=`<div class="banner">Her question to you</div><p class="quote">${esc(q)}</p>
-      <textarea id="gA" placeholder="Your answer"></textarea><button class="big" id="gGo">Reveal</button><div id="gOut"></div>`;
-    $("#gGo").onclick=()=>{
-      const a=$("#gA").value.trim(); if(!a){ toast("Type something first"); return; }
-      const right=a.toLowerCase()===(cur.inc.a||"").toLowerCase();
-      $("#gOut").innerHTML=`<div class="stepnum" style="margin-top:1.6rem">She guessed</div><p class="quote">${esc(cur.inc.g||"\u2014")}</p>
-        <div class="stepnum">You said</div><p class="quote">${esc(a)}</p>
-        <p class="hint">${right?"She guessed it exactly.":"Not exact. Close enough to talk about."}</p>`;
-    };
-  } else {
-    const q=g.prompts[g._q];
-    box.innerHTML=`<p class="quote">${esc(q)}</p>
-      <textarea id="gA" placeholder="Your answer"></textarea>
-      <textarea id="gG" placeholder="What you think she will say"></textarea>
-      <button class="big" id="gGo">Done</button>
-      <button class="tiny" id="gShuf">Different question</button>`;
-    $("#gShuf").onclick=()=>{ g._q=(g._q+1)%g.prompts.length; gGuess(box,g); };
-    $("#gGo").onclick=()=>{
-      const a=$("#gA").value.trim(), gg=$("#gG").value.trim();
-      if(!a||!gg){ toast("Fill in both boxes"); return; }
-      afterTurn(box,g,{q:g._q,a:a,g:gg},"guess");
-    };
+  const id=cur.id, mine=mineOf(id), theirs=theirsOf(id);
+  const iAsked = mine && mine.q!==undefined;
+  const sheAsked = theirs && theirs.q!==undefined;
+  if(iAsked && theirs && theirs.a!==undefined) return guessReveal(box,g,mine,theirs,true);
+  if(sheAsked && mine && mine.a!==undefined) return guessReveal(box,g,theirs,mine,false);
+  if(iAsked) return waiting(box,id,savedMsg());
+  if(sheAsked){
+    const q=g.prompts[theirs.q]||g.prompts[0];
+    box.innerHTML=`<div class="banner">${pn()? pn()+"'s question to you":"Their question to you"}</div><p class="quote">${esc(q)}</p>
+      <textarea id="gA" placeholder="Your answer"></textarea><button class="big" id="gGo">Done</button>`;
+    $("#gGo").onclick=()=>{ const a=$("#gA").value.trim(); if(!a){ toast("Type something first"); return; }
+      state.games[id]={a:a}; save(); cur.touched=false; renderGame(); };
+    return;
   }
+  if(g._q===undefined) g._q=Math.floor(Math.random()*g.prompts.length);
+  const q=g.prompts[g._q];
+  box.innerHTML=`<p class="quote">${esc(q)}</p>
+    <textarea id="gA" placeholder="Your answer"></textarea>
+    <textarea id="gG" placeholder="What you think she will say"></textarea>
+    <button class="big" id="gGo">Done</button>
+    <button class="tiny" id="gShuf">Different question</button>`;
+  $("#gShuf").onclick=()=>{ g._q=(g._q+1)%g.prompts.length; gGuess(box,g); };
+  $("#gGo").onclick=()=>{
+    const a=$("#gA").value.trim(), gg=$("#gG").value.trim();
+    if(!a||!gg){ toast("Fill in both boxes"); return; }
+    state.games[id]={q:g._q,a:a,g:gg}; save(); cur.touched=false; renderGame();
+  };
+}
+function guessReveal(box,g,guesser,answerer,iAmGuesser){
+  const q=g.prompts[guesser.q]||"";
+  const right=String(answerer.a||"").toLowerCase()===String(guesser.a||"").toLowerCase();
+  box.innerHTML=`<p class="quote">${esc(q)}</p>
+    <div class="stepnum" style="margin-top:1.4rem">${iAmGuesser?"You guessed":(pn()||"They")+" guessed"}</div><p class="quote">${esc(guesser.g||"\u2014")}</p>
+    <div class="stepnum">${iAmGuesser?(pn()||"They")+" said":"You said"}</div><p class="quote">${esc(answerer.a||"\u2014")}</p>
+    <p class="hint">${right?"An exact match.":"Not exact. Close enough to talk about."}</p>`;
+  playAgain(cur.id,box,g);
 }
 
 function gDraw(box,g){
@@ -622,15 +652,6 @@ function gDraw(box,g){
   box.innerHTML=`<p class="quote" id="dOut">${esc(g.dice? "Roll the dice." : "Pick one.")}</p>
     <div class="pair" style="margin-top:1rem">${labels.map((l,i)=>`<button class="big" style="margin:0" data-s="${i}">${l}</button>`).join("")}</div>`;
   box.querySelectorAll("[data-s]").forEach(b=>b.onclick=()=>{ $("#dOut").textContent=pick(sets[+b.dataset.s]); });
-}
-
-function afterTurn(box,g,answers,kind){
-  box.innerHTML=`<button class="big" id="gSend">Send to Pooja</button>
-    <button class="ghost" id="gHand">Hand her the phone</button>
-    <button class="tiny" id="gDone">Done</button>`;
-  $("#gSend").onclick=()=>copy(link(cur.id,{a:answers}),"Link copied \u2014 send it to her");
-  $("#gHand").onclick=()=>{ cur.stage="her"; renderGame(); };
-  $("#gDone").onclick=()=>$("#play").classList.remove("show");
 }
 
 /* ---------- tonight: scripts ---------- */
@@ -672,9 +693,11 @@ renderLine();
 $("#lineNext").addEventListener("click",()=>{ lIdx=(lIdx+1)%LINES.length; renderLine(); });
 
 /* ---------- yes/no/maybe ---------- */
-function renderWho(){ $$("#whoChips button").forEach(b=>b.classList.toggle("on", b.dataset.w===state.ynm.who)); }
-$("#whoChips").innerHTML=`<button class="chip" data-w="you">You</button><button class="chip" data-w="partner">Her</button>`;
-renderWho();
+function renderWhoChips(){
+  $("#whoChips").innerHTML=`<button class="chip" data-w="you">You</button><button class="chip" data-w="partner">${esc(pn()||"Them")}</button>`;
+  $$("#whoChips button").forEach(b=>b.classList.toggle("on", b.dataset.w===state.ynm.who));
+}
+renderWhoChips();
 function renderYnm(){
   const who=state.ynm.who||"you";
   $("#ynmList").innerHTML=YNM.map((label,i)=>{
@@ -683,7 +706,7 @@ function renderYnm(){
     return `<li><span class="lab">${esc(label)}</span><span class="tri">${c("yes","Y")}${c("maybe","M")}${c("no","N")}</span></li>`;
   }).join("");
   $("#ynmOut").innerHTML="";
-  renderWho();
+  renderWhoChips();
 }
 renderYnm();
 $("#whoChips").addEventListener("click",e=>{ const b=e.target.closest("[data-w]"); if(!b) return; state.ynm.who=b.dataset.w; save(); renderYnm(); });
@@ -745,7 +768,7 @@ async function ghPut(p,obj,msg){
   if(!r.ok){ const t=await r.text(); throw new Error("GitHub "+r.status+" "+t.slice(0,120)); }
   return r.json();
 }
-function myPayload(){ return { name:cfg.name, updated:Date.now(), online:true, answers:{ ynm:state.ynm.you||{}, signals:state.signals||{}, countdown:state.countdown||"" } }; }
+function myPayload(){ return { name:cfg.name, updated:Date.now(), online:true, answers:{ ynm:state.ynm.you||{}, signals:state.signals||{}, countdown:state.countdown||"", games:state.games||{} } }; }
 async function syncPush(force){ if(!cfg||!cfg.token) return; const n=Date.now(); if(!force&&n-lastPush<120000) return; lastPush=n; await ghPut(myPath(),myPayload(),"update from "+cfg.name); }
 async function syncPull(){
   if(!cfg||!cfg.token) return;
@@ -760,8 +783,10 @@ async function syncPull(){
       if(data.answers.ynm) state.ynm.partner=data.answers.ynm;
       if(data.answers.signals) Object.keys(data.answers.signals).forEach(k=>{ if(data.answers.signals[k]) state.signals[k]=true; });
       if(data.answers.countdown) state.countdown=data.answers.countdown;
+      if(data.answers.games) state.partnerGames=data.answers.games;
     }
     save(); renderYnm(); renderSig(); renderCd();
+    if(cur && !cur.touched && $("#play").classList.contains("show")) renderGame();
   }catch(e){}
   pulling=false; renderPresence();
 }
@@ -803,24 +828,6 @@ $("#cfgTest").addEventListener("click",async()=>{
 });
 $("#cfgSync").addEventListener("click",()=>syncNow(true));
 document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible"){ syncPull().catch(()=>{}); scheduleSync(); } });
-
-/* ---------- open from a link ---------- */
-function importHash(){
-  const h=location.hash.replace(/^#/,""); if(!h) return;
-  let p; try{ p=new URLSearchParams(h); }catch(e){ return; }
-  const gid=p.get("g"), d=p.get("d"); if(!gid||!d) return;
-  if(!GAMES[gid]) return;
-  try{
-    incoming={ id:gid, data:b64d(d) };
-    $$(".tab").forEach(x=>x.classList.remove("on"));
-    document.querySelector('.tab[data-tab="play"]').classList.add("on");
-    $$(".view").forEach(v=>v.classList.remove("active"));
-    $("#view-play").classList.add("active");
-    openGame(gid); toast("Loaded");
-  }catch(e){}
-}
-importHash();
-window.addEventListener("hashchange",importHash);
 
 renderPresence();
 if(cfg&&cfg.token){ setStatus("Ready."); syncNow(false); scheduleSync(); }
